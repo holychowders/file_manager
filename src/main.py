@@ -36,6 +36,8 @@ class GUI:
     def run(self) -> None:
         self.gui.mainloop()
 
+    # Tags stuff
+
     def init_content_tags(self) -> None:
         self.tags: List[ContentTag] = []
         self.update_tags()
@@ -53,6 +55,8 @@ class GUI:
 
         for tag in tags:
             self.tags.append(ContentTag(tag, IntVar()))
+
+    # Debugging stuff
 
     def debug(self) -> None:
         self.add_debug_button()
