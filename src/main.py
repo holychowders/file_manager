@@ -7,7 +7,7 @@ def main() -> None:
     db_cursor = get_db_cursor()
     db_cursor.execute("")
 
-    build_gui().mainloop()
+    GUI().run()
 
 
 def get_db_cursor() -> Cursor:
@@ -17,13 +17,17 @@ def get_db_cursor() -> Cursor:
     return cursor
 
 
-def build_gui() -> Tk:
-    gui = Tk()
-    gui.title("File Manager")
-    gui.iconbitmap("assets/main-icon-512px-colored.ico")
-    gui.geometry("400x600")
+class GUI:
+    def __init__(self):
+        gui = Tk()
+        gui.title("File Manager")
+        gui.iconbitmap("assets/main-icon-512px-colored.ico")
+        gui.geometry("400x600")
 
-    return gui
+        self.gui = gui
+
+    def run(self) -> None:
+        self.gui.mainloop()
 
 
 if __name__ == "__main__":
