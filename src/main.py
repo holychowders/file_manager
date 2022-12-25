@@ -5,11 +5,11 @@ from tkinter import Button, Checkbutton, IntVar, Label, Tk
 from typing import List
 
 
-def main() -> None:
+def main(debug: bool) -> None:
     db_cursor = get_db_cursor()
     db_cursor.execute("")
 
-    GUI(debug=False).run()
+    GUI(debug).run()
 
 
 def get_db_cursor() -> Cursor:
@@ -73,7 +73,3 @@ class GUI:
 class ContentTag:
     name: str
     is_selected: IntVar
-
-
-if __name__ == "__main__":
-    main()
