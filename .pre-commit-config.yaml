@@ -17,21 +17,21 @@ repos:
 
     -   id: isort
         name: isort
-        entry: isort ./src
+        entry: isort ./file_manager
         language: python
         types: [text]
         pass_filenames: false
 
     -   id: black
         name: black
-        entry: black ./src --line-length 120
+        entry: black ./file_manager --line-length 120
         language: python
         types: [text]
         pass_filenames: false
 
     -   id: pylama
         name: pylama
-        entry: pylama src --async --linters eradicate,mccabe,mypy,pycodestyle,pyflakes,pylint,isort
+        entry: pylama ./file_manager --async --linters eradicate,mccabe,mypy,pycodestyle,pyflakes,pylint,isort
         language: python
         types: [text]
         pass_filenames: false
