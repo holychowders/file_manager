@@ -1,22 +1,37 @@
 import sqlite3
 from dataclasses import dataclass
-from sqlite3 import Cursor
+from os import path
 from tkinter import Button, Checkbutton, IntVar, Label, Tk
 from typing import List
 
+DB_PATH = "test.db"
+
 
 def main(debug: bool) -> None:
-    db_cursor = get_db_cursor()
-    db_cursor.execute("")
+    init_db()
 
     GUI(debug).run()
 
 
-def get_db_cursor() -> Cursor:
-    connection = sqlite3.connect("test.db")
+def init_db():
+    if not path.exists(DB_PATH):
+        init_new_db()
+
+
+def init_new_db():
+    cmd_create_files_table = "CREATE TABLE files(name TEXT NOT NULL, path TEXT NOT NULL)"
+    cmd_create_tags_table = "CREATE TABLE tags(name TEXT NOT NULL)"
+    cmd_insert_defaults_for_tags = "INSERT INTO tags(name) VALUES('Favorite')"
+
+    db_commands = cmd_create_files_table, cmd_create_tags_table, cmd_insert_defaults_for_tags
+
+    connection = sqlite3.connect(DB_PATH)
     cursor = connection.cursor()
 
-    return cursor
+    for cmd in db_commands:
+        cursor.execute(cmd)
+
+    connection.commit()
 
 
 class GUI:
@@ -62,11 +77,16 @@ class GUI:
         self.add_debug_button()
 
     def add_debug_button(self) -> None:
-        Button(
-            self.gui,
-            text="Debug",
-            command=lambda: print("\nDEBUG:") or [print(f"{tag.name} {tag.is_selected.get()}") for tag in self.tags],
-        ).pack()
+        Button(self.gui, text="Debug", command=self.debug_db).pack()
+
+    @staticmethod
+    def debug_db() -> None:
+        connection = sqlite3.connect(DB_PATH)
+        cursor = connection.cursor()
+
+        print("\nDB DEBUG:")
+        print("files:\n", cursor.execute("SELECT * FROM files").fetchall())
+        print("\ntags:\n", cursor.execute("SELECT * FROM tags").fetchall())
 
 
 @dataclass
