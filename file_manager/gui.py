@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from tkinter import Button, Checkbutton, IntVar, Label, Tk
+from tkinter import LEFT, NW, Button, Checkbutton, IntVar, Label, Tk
 from typing import List
 
 from db import fetch_files_from_db, fetch_tags_from_db
@@ -33,7 +33,7 @@ class GUI:
         Label(self.gui, text="Tags").pack()
 
         for tag in self.tags:
-            Checkbutton(self.gui, text=tag.name, variable=tag.is_selected).pack()
+            Checkbutton(self.gui, text=tag.name, variable=tag.is_selected).pack(side=LEFT, anchor=NW)
 
     def fetch_tags_from_db(self) -> None:
         tags = fetch_tags_from_db()
