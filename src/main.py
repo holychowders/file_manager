@@ -26,13 +26,12 @@ def init_new_db():
 
     db_commands = cmd_create_files_table, cmd_create_tags_table, cmd_insert_defaults_for_tags
 
-    connection = sqlite3.connect(DB_PATH)
-    cursor = connection.cursor()
+    cursor = get_db_cursor()
 
     for cmd in db_commands:
         cursor.execute(cmd)
 
-    connection.commit()
+    cursor.connection.commit()
 
 
 def fetch_tags_from_db() -> List[str]:
