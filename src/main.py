@@ -1,8 +1,9 @@
 import sqlite3
 from dataclasses import dataclass
 from os import path
+from sqlite3 import Cursor
 from tkinter import Button, Checkbutton, IntVar, Label, Tk
-from typing import List
+from typing import List, Tuple
 
 DB_PATH = "test.db"
 
@@ -34,6 +35,20 @@ def init_new_db():
     connection.commit()
 
 
+def fetch_tags_from_db() -> List[str]:
+    cursor = get_db_cursor()
+    return cursor.execute("SELECT * FROM tags").fetchall()
+
+
+def fetch_files_from_db() -> List[Tuple[str]]:
+    cursor = get_db_cursor()
+    return cursor.execute("SELECT * FROM files").fetchall()
+
+
+def get_db_cursor() -> Cursor:
+    return sqlite3.connect(DB_PATH).cursor()
+
+
 class GUI:
     def __init__(self, debug=False):
         gui = Tk()
@@ -55,7 +70,7 @@ class GUI:
 
     def init_content_tags(self) -> None:
         self.tags: List[ContentTag] = []
-        self.update_tags()
+        self.fetch_tags_from_db()
         self.add_tags_selection()
 
     def add_tags_selection(self):
@@ -64,9 +79,8 @@ class GUI:
         for tag in self.tags:
             Checkbutton(self.gui, text=tag.name, variable=tag.is_selected).pack()
 
-    def update_tags(self) -> None:
-        # TODO: Get list of possible tags from database in order to create checkboxes for them.
-        tags = ("Favorite", "Archive")
+    def fetch_tags_from_db(self) -> None:
+        tags = fetch_tags_from_db()
 
         for tag in tags:
             self.tags.append(ContentTag(tag, IntVar()))
@@ -81,12 +95,9 @@ class GUI:
 
     @staticmethod
     def debug_db() -> None:
-        connection = sqlite3.connect(DB_PATH)
-        cursor = connection.cursor()
-
         print("\nDB DEBUG:")
-        print("files:\n", cursor.execute("SELECT * FROM files").fetchall())
-        print("\ntags:\n", cursor.execute("SELECT * FROM tags").fetchall())
+        print("files:\n", fetch_files_from_db())
+        print("\ntags:\n", fetch_tags_from_db())
 
 
 @dataclass
