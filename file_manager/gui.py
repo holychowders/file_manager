@@ -41,7 +41,7 @@ class GUI:
     def add_tags_frame(self) -> None:
         row, column = self.TAGS_FRAME_POS
         frame = LabelFrame(self.gui, text="Tags")
-        frame.grid(padx=5, pady=5, row=row, column=column)
+        frame.grid(row=row, column=column, padx=5, pady=5)
 
         self.add_tags_search_subframe(frame)
 
@@ -53,7 +53,7 @@ class GUI:
         frame.grid(padx=5, pady=5)
 
         Entry(frame, width=10).grid(row=0, column=0, padx=5, pady=10, ipadx=1, ipady=1)
-        Button(frame, text="+/-").grid(padx=5, pady=5, row=0, column=1)
+        Button(frame, text="+/-").grid(row=0, column=1, padx=5, pady=5)
 
     def load_tags_from_db(self) -> None:
         tags = fetch_tags_from_db()
@@ -77,7 +77,7 @@ class GUI:
     def add_files_frame(self) -> None:
         row, column = self.FILES_FRAME_POS
         frame = LabelFrame(self.gui, text="Files")
-        frame.grid(padx=5, pady=5, row=row, column=column)
+        frame.grid(row=row, column=column, padx=5, pady=5)
 
         Entry(frame, width=35).pack(side=TOP, anchor=N, padx=5, pady=5, ipadx=1, ipady=1)
 
