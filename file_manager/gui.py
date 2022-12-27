@@ -1,13 +1,19 @@
 import os
+from collections import namedtuple
 from dataclasses import dataclass
 from functools import partial
-from tkinter import NW, TOP, Button, Checkbutton, Entry, IntVar, Label, N, Tk
+from tkinter import TOP, Button, Checkbutton, Entry, IntVar, LabelFrame, N, Tk
 from typing import List
 
 from db import fetch_files_from_db, fetch_tags_from_db
 
+WidgetGridPosition = namedtuple("WidgetGridPosition", "row column")
+
 
 class GUI:
+    TAGS_FRAME_POS = WidgetGridPosition(0, 0)
+    FILES_FRAME_POS = WidgetGridPosition(0, 1)
+
     def __init__(self, debug=False):
         gui = Tk()
         gui.title("File Manager")
@@ -19,26 +25,35 @@ class GUI:
         if debug:
             self.debug()
 
-        self.add_search_bar()
-        self.init_content_tags_section()
-        self.init_file_results_section()
+        self.init_tags_frame()
+        self.init_files_frame()
 
     def run(self) -> None:
         self.gui.mainloop()
 
     # Tags stuff
 
-    def init_content_tags_section(self) -> None:
+    def init_tags_frame(self) -> None:
         self.tags: List[ContentTag] = []
         self.load_tags_from_db()
-        self.add_tags_selection()
+        self.add_tags_frame()
 
-    def add_tags_selection(self):
-        Label(self.gui, text="Tags").pack(anchor=NW)
-        Entry(self.gui, width=20).pack(anchor=NW, ipadx=1, ipady=1)
+    def add_tags_frame(self):
+        row, column = self.TAGS_FRAME_POS
+        frame = LabelFrame(self.gui, text="Tags")
+        frame.grid(padx=5, pady=5, row=row, column=column)
+
+        self.add_tags_search_subframe(frame)
 
         for tag in self.tags:
-            Checkbutton(self.gui, text=tag.name, variable=tag.is_selected).pack(anchor=NW)
+            Checkbutton(frame, text=tag.name, variable=tag.is_selected).grid()
+
+    def add_tags_search_subframe(self, tags_frame):
+        frame = LabelFrame(tags_frame, text="Search/Edit")
+        frame.grid(padx=5, pady=5)
+
+        Entry(frame, width=10).grid(row=0, column=0, padx=5, pady=10, ipadx=1, ipady=1)
+        Button(frame, text="+/-").grid(padx=5, pady=5, row=0, column=1)
 
     def load_tags_from_db(self) -> None:
         tags = fetch_tags_from_db()
@@ -46,17 +61,12 @@ class GUI:
         for tag in tags:
             self.tags.append(ContentTag(tag, IntVar()))
 
-    # Search bar
-
-    def add_search_bar(self) -> None:
-        Entry(self.gui, width=35).pack(side=TOP, anchor=N, ipadx=1, ipady=1)
-
     # File results stuff
 
-    def init_file_results_section(self) -> None:
+    def init_files_frame(self) -> None:
         self.file_results: List[FileResult] = []
         self.load_files_from_db()
-        self.add_file_results()
+        self.add_files_frame()
 
     def load_files_from_db(self) -> None:
         files = fetch_files_from_db()
@@ -64,9 +74,15 @@ class GUI:
         for name, path in files:
             self.file_results.append(FileResult(name, path))
 
-    def add_file_results(self) -> None:
+    def add_files_frame(self) -> None:
+        row, column = self.FILES_FRAME_POS
+        frame = LabelFrame(self.gui, text="Files")
+        frame.grid(padx=5, pady=5, row=row, column=column)
+
+        Entry(frame, width=35).pack(side=TOP, anchor=N, padx=5, pady=5, ipadx=1, ipady=1)
+
         for file in self.file_results:
-            Button(text=file.name, command=partial(os.startfile, file.path)).pack()
+            Button(frame, text=file.name, command=partial(os.startfile, file.path)).pack(padx=5, pady=5)
 
     # Debugging stuff
 
