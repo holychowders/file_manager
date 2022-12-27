@@ -14,7 +14,7 @@ class GUI:
     TAGS_FRAME_POS = WidgetGridPosition(0, 0)
     FILES_FRAME_POS = WidgetGridPosition(0, 1)
 
-    def __init__(self, debug=False):
+    def __init__(self, debug: bool = False) -> None:
         gui = Tk()
         gui.title("File Manager")
         gui.iconbitmap("assets/main-icon-512px-colored.ico")
@@ -38,7 +38,7 @@ class GUI:
         self.load_tags_from_db()
         self.add_tags_frame()
 
-    def add_tags_frame(self):
+    def add_tags_frame(self) -> None:
         row, column = self.TAGS_FRAME_POS
         frame = LabelFrame(self.gui, text="Tags")
         frame.grid(padx=5, pady=5, row=row, column=column)
@@ -48,7 +48,7 @@ class GUI:
         for tag in self.tags:
             Checkbutton(frame, text=tag.name, variable=tag.is_selected).grid()
 
-    def add_tags_search_subframe(self, tags_frame):
+    def add_tags_search_subframe(self, tags_frame: LabelFrame) -> None:
         frame = LabelFrame(tags_frame, text="Search/Edit")
         frame.grid(padx=5, pady=5)
 
