@@ -43,12 +43,12 @@ class GUI:
         frame = LabelFrame(self.gui, text="Tags")
         frame.grid(row=row, column=column, padx=5, pady=5)
 
-        self.add_tags_search_subframe(frame)
+        self.add_tags_search_and_edit_subframe(frame)
 
         for tag in self.tags:
             Checkbutton(frame, text=tag.name, variable=tag.is_selected).grid()
 
-    def add_tags_search_subframe(self, tags_frame: LabelFrame) -> None:
+    def add_tags_search_and_edit_subframe(self, tags_frame: LabelFrame) -> None:
         frame = LabelFrame(tags_frame, text="Search/Edit")
         frame.grid(padx=5, pady=5)
 
