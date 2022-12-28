@@ -17,7 +17,7 @@ repos:
 
     -   id: isort
         name: isort
-        entry: isort ./file_manager
+        entry: isort ./file_manager --profile black
         language: python
         types: [text]
         pass_filenames: false

@@ -1,7 +1,7 @@
 import sqlite3
 from os import path
 from sqlite3 import Cursor
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 DB_PATH = "test.db"
 
@@ -13,10 +13,18 @@ def init_db() -> None:
 
 def init_new_db() -> None:
     cmd_create_files_table = "CREATE TABLE files(name TEXT NOT NULL, path TEXT NOT NULL)"
-    cmd_create_tags_table = "CREATE TABLE tags(name TEXT NOT NULL)"
-    cmd_insert_defaults_for_tags = "INSERT INTO tags(name) VALUES('Favorite')"
+    cmd_create_tags_table = "CREATE TABLE tags(name TEXT NOT NULL, is_hidden BOOLEAN NOT NULL)"
+    cmd_insert_defaults_for_files = (
+        "INSERT INTO files(name, path) VALUES ('sample_video', 'sample_video.mp4'), ('non_existent_video', 'video.dne')"
+    )
+    cmd_insert_defaults_for_tags = "INSERT INTO tags(name, is_hidden) VALUES ('Favorite', 0), ('Archive', 0)"
 
-    db_commands = cmd_create_files_table, cmd_create_tags_table, cmd_insert_defaults_for_tags
+    db_commands = (
+        cmd_create_files_table,
+        cmd_create_tags_table,
+        cmd_insert_defaults_for_files,
+        cmd_insert_defaults_for_tags,
+    )
 
     cursor = get_db_cursor()
 
@@ -26,16 +34,9 @@ def init_new_db() -> None:
     cursor.connection.commit()
 
 
-def fetch_tags_from_db() -> List[str]:
+def fetch_tags_from_db() -> List[Tuple[Union[str, bool]]]:
     cursor = get_db_cursor()
-
-    tags = []
-    tag_rows = cursor.execute("SELECT * FROM tags").fetchall()
-
-    for tag in tag_rows:
-        tags.append(tag[0])
-
-    return tags
+    return cursor.execute("SELECT * FROM tags").fetchall()
 
 
 def fetch_files_from_db() -> List[Tuple[str]]:
@@ -45,3 +46,15 @@ def fetch_files_from_db() -> List[Tuple[str]]:
 
 def get_db_cursor() -> Cursor:
     return sqlite3.connect(DB_PATH).cursor()
+
+
+def disable_tag_in_db(tag: str) -> None:
+    get_db_cursor().execute(f"UPDATE tags SET is_hidden=1 WHERE name='{tag}'").connection.commit()
+
+
+def enable_tag_in_db(tag: str) -> None:
+    get_db_cursor().execute(f"UPDATE tags SET is_hidden=0 WHERE name='{tag}'").connection.commit()
+
+
+def create_tag(tag: str) -> None:
+    get_db_cursor().execute(f"INSERT INTO tags(name, is_hidden) VALUES ('{tag}', 0)").connection.commit()

@@ -5,12 +5,19 @@ from functools import partial
 from tkinter import TOP, Button, Checkbutton, Entry, IntVar, LabelFrame, N, Tk
 from typing import List
 
-from db import fetch_files_from_db, fetch_tags_from_db
+from db import (
+    create_tag,
+    disable_tag_in_db,
+    enable_tag_in_db,
+    fetch_files_from_db,
+    fetch_tags_from_db,
+)
 
 
 @dataclass
 class ContentTag:
     name: str
+    is_hidden: bool
     is_selected: IntVar
 
 
@@ -59,11 +66,33 @@ class GUI:
         frame = LabelFrame(tags_frame, text="Search/Edit")
         frame.grid(padx=5, pady=5)
 
-        Entry(frame, width=10).grid(row=0, column=0, padx=5, pady=10, ipadx=1, ipady=1)
+        entry = Entry(frame, width=10)
+        entry.grid(row=0, column=0, padx=5, pady=10, ipadx=1, ipady=1)
 
-        Button(frame, text="+/-", command=partial(self.update_tags_in_tags_frame, tags_frame)).grid(
+        Button(frame, text="+/-", command=partial(self.toggle_tag, tags_frame, entry)).grid(
             row=0, column=1, padx=5, pady=5
         )
+
+    def toggle_tag(self, tags_frame: LabelFrame, entry: Entry) -> None:
+        target = entry.get()
+
+        if not target:
+            return
+
+        tags = self.fetch_tags_from_db()
+        is_target_in_tags = False
+        for tag in tags:
+            if tag.name == target:
+                is_target_in_tags = True
+
+                if tag.is_hidden:
+                    enable_tag_in_db(target)
+                else:
+                    disable_tag_in_db(target)
+        if not is_target_in_tags:
+            create_tag(target)
+
+        self.update_tags_in_tags_frame(tags_frame)
 
     def update_tags_in_tags_frame(self, frame: LabelFrame) -> None:
         self.clear_frame(frame)
@@ -76,15 +105,16 @@ class GUI:
     def populate_tags_in_tags_frame(self, tags_frame: LabelFrame) -> None:
         tags = self.fetch_tags_from_db()
         for tag in tags:
-            Checkbutton(tags_frame, text=tag.name, variable=tag.is_selected).grid()
+            if not tag.is_hidden:
+                Checkbutton(tags_frame, text=tag.name, variable=tag.is_selected).grid()
 
     @staticmethod
     def fetch_tags_from_db() -> List[ContentTag]:
         tags = fetch_tags_from_db()
         content_tags = []
 
-        for tag in tags:
-            content_tags.append(ContentTag(tag, IntVar()))
+        for tag, is_hidden in tags:
+            content_tags.append(ContentTag(name=tag, is_hidden=is_hidden, is_selected=IntVar()))
 
         return content_tags
 
