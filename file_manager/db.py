@@ -53,11 +53,11 @@ def get_db_cursor() -> Cursor:
     return sqlite3.connect(DB_PATH).cursor()
 
 
-def disable_tag_in_db(tag: str) -> None:
+def disable_tag_visibility_in_db(tag: str) -> None:
     get_db_cursor().execute(f"UPDATE tags SET is_hidden=1 WHERE name='{tag}'").connection.commit()
 
 
-def enable_tag_in_db(tag: str) -> None:
+def enable_tag_visibility_in_db(tag: str) -> None:
     get_db_cursor().execute(f"UPDATE tags SET is_hidden=0 WHERE name='{tag}'").connection.commit()
 
 

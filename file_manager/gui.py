@@ -7,8 +7,8 @@ from typing import List
 
 from db import (
     create_tag,
-    disable_tag_in_db,
-    enable_tag_in_db,
+    disable_tag_visibility_in_db,
+    enable_tag_visibility_in_db,
     fetch_files_from_db,
     fetch_tags_from_db,
     get_db_cursor,
@@ -92,9 +92,9 @@ class GUI:
                 is_target_in_tags = True
 
                 if tag.is_hidden:
-                    enable_tag_in_db(target)
+                    enable_tag_visibility_in_db(target)
                 else:
-                    disable_tag_in_db(target)
+                    disable_tag_visibility_in_db(target)
         if not is_target_in_tags:
             create_tag(target)
 
