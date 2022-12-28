@@ -13,11 +13,16 @@ def init_db() -> None:
 
 def init_new_db() -> None:
     cmd_create_files_table = "CREATE TABLE files(name TEXT NOT NULL, path TEXT NOT NULL)"
-    cmd_create_tags_table = "CREATE TABLE tags(name TEXT NOT NULL, is_hidden BOOLEAN NOT NULL)"
     cmd_insert_defaults_for_files = (
         "INSERT INTO files(name, path) VALUES ('sample_video', 'sample_video.mp4'), ('non_existent_video', 'video.dne')"
     )
-    cmd_insert_defaults_for_tags = "INSERT INTO tags(name, is_hidden) VALUES ('Favorite', 0), ('Archive', 0)"
+
+    cmd_create_tags_table = (
+        "CREATE TABLE tags(name TEXT NOT NULL, is_hidden BOOLEAN NOT NULL, is_selected BOOLEAN NOT NULL)"
+    )
+    cmd_insert_defaults_for_tags = (
+        "INSERT INTO tags(name, is_hidden, is_selected) VALUES ('Favorite', 0, 0), ('Archive', 0, 0)"
+    )
 
     db_commands = (
         cmd_create_files_table,
@@ -34,7 +39,7 @@ def init_new_db() -> None:
     cursor.connection.commit()
 
 
-def fetch_tags_from_db() -> List[Tuple[Union[str, bool]]]:
+def fetch_tags_from_db() -> List[Tuple[Union[str, bool, bool]]]:
     cursor = get_db_cursor()
     return cursor.execute("SELECT * FROM tags").fetchall()
 

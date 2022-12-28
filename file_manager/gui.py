@@ -11,6 +11,7 @@ from db import (
     enable_tag_in_db,
     fetch_files_from_db,
     fetch_tags_from_db,
+    get_db_cursor,
 )
 
 
@@ -107,15 +108,31 @@ class GUI:
         tags = self.fetch_tags_from_db()
         for tag in tags:
             if not tag.is_hidden:
-                Checkbutton(tags_frame, text=tag.name, variable=tag.is_selected).grid()
+                Checkbutton(
+                    tags_frame,
+                    text=tag.name,
+                    variable=tag.is_selected,
+                    command=partial(self.toggle_tag_selection_in_db, tag),
+                ).grid()
+
+    def toggle_tag_selection_in_db(self, tag: ContentTag) -> None:
+        print(tag)
+        print(tag.is_selected)
+        print(tag.is_selected.get())
+        get_db_cursor().execute(
+            f"UPDATE tags SET is_selected={tag.is_selected.get()} WHERE name='{tag.name}'"
+        ).connection.commit()
 
     @staticmethod
     def fetch_tags_from_db() -> List[ContentTag]:
         tags = fetch_tags_from_db()
         content_tags = []
 
-        for tag, is_hidden in tags:
-            content_tags.append(ContentTag(name=tag, is_hidden=is_hidden, is_selected=IntVar()))
+        for tag, is_hidden, is_selected_in_db in tags:
+            is_selected = IntVar()
+            is_selected.set(is_selected_in_db)
+
+            content_tags.append(ContentTag(name=tag, is_hidden=is_hidden, is_selected=is_selected))
 
         return content_tags
 
