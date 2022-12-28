@@ -61,6 +61,7 @@ class GUI:
         frame.grid(row=row, column=column, padx=5, pady=5)
 
         self.add_tags_search_and_edit_subframe(frame)
+        self.add_tags_selection_clear_button(frame)
         self.populate_tags_in_tags_frame(frame)
 
     def add_tags_search_and_edit_subframe(self, tags_frame: LabelFrame) -> None:
@@ -73,6 +74,9 @@ class GUI:
         Button(frame, text="+/-", command=partial(self.toggle_tag_visibility_in_db, tags_frame, entry)).grid(
             row=0, column=1, padx=5, pady=5
         )
+
+    def add_tags_selection_clear_button(self, tags_frame: LabelFrame) -> None:
+        Button(tags_frame, text="Clear Selections", command=self.clear_tag_selections).grid()
 
     def toggle_tag_visibility_in_db(self, tags_frame: LabelFrame, entry: Entry) -> None:
         """Toggle the visibility of the tag itself on the UI."""
@@ -122,6 +126,14 @@ class GUI:
         get_db_cursor().execute(
             f"UPDATE tags SET is_selected={tag.is_selected.get()} WHERE name='{tag.name}'"
         ).connection.commit()
+
+    def clear_tag_selections(self) -> None:
+        self.clear_tag_selections_in_db()
+        # Should there be a self.clear_frame(tags_frame) here?
+        self.init_tags_frame()
+
+    def clear_tag_selections_in_db(self) -> None:
+        get_db_cursor().execute("UPDATE tags SET is_selected=0 ").connection.commit()
 
     @staticmethod
     def fetch_tags_from_db() -> List[ContentTag]:

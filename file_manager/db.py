@@ -62,4 +62,6 @@ def enable_tag_in_db(tag: str) -> None:
 
 
 def create_tag(tag: str) -> None:
-    get_db_cursor().execute(f"INSERT INTO tags(name, is_hidden) VALUES ('{tag}', 0)").connection.commit()
+    get_db_cursor().execute(
+        f"INSERT INTO tags(name, is_hidden, is_selected) VALUES ('{tag}', 0, 0)"
+    ).connection.commit()
