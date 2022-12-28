@@ -6,7 +6,7 @@ from tkinter import TOP, Button, Checkbutton, Entry, IntVar, LabelFrame, N, Tk
 from typing import List
 
 from db import (
-    create_tag,
+    create_tag_in_db,
     disable_tag_selection_in_db,
     disable_tag_visibility_in_db,
     enable_tag_visibility_in_db,
@@ -98,7 +98,7 @@ class GUI:
                     disable_tag_selection_in_db(target)
                     disable_tag_visibility_in_db(target)
         if not is_target_in_tags:
-            create_tag(target)
+            create_tag_in_db(target)
 
         self.update_tags_in_tags_frame(tags_frame)
 
