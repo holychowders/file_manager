@@ -38,7 +38,7 @@ class GUI:
         if debug:
             self.debug()
 
-        self.add_tags_frame()
+        self.init_tags_frame()
         self.add_files_frame()
 
     def run(self) -> None:
@@ -46,23 +46,37 @@ class GUI:
 
     # Tags stuff
 
-    def add_tags_frame(self) -> None:
+    def init_tags_frame(self) -> None:
         row, column = self.TAGS_FRAME_POS
+
         frame = LabelFrame(self.gui, text="Tags")
         frame.grid(row=row, column=column, padx=5, pady=5)
 
         self.add_tags_search_and_edit_subframe(frame)
-
-        tags = self.fetch_tags_from_db()
-        for tag in tags:
-            Checkbutton(frame, text=tag.name, variable=tag.is_selected).grid()
+        self.populate_tags_in_tags_frame(frame)
 
     def add_tags_search_and_edit_subframe(self, tags_frame: LabelFrame) -> None:
         frame = LabelFrame(tags_frame, text="Search/Edit")
         frame.grid(padx=5, pady=5)
 
         Entry(frame, width=10).grid(row=0, column=0, padx=5, pady=10, ipadx=1, ipady=1)
-        Button(frame, text="+/-").grid(row=0, column=1, padx=5, pady=5)
+
+        Button(frame, text="+/-", command=partial(self.update_tags_in_tags_frame, tags_frame)).grid(
+            row=0, column=1, padx=5, pady=5
+        )
+
+    def update_tags_in_tags_frame(self, frame: LabelFrame) -> None:
+        self.clear_frame(frame)
+        self.init_tags_frame()
+
+    def clear_frame(self, frame: LabelFrame) -> None:
+        frame.destroy()
+        frame.pack_forget()
+
+    def populate_tags_in_tags_frame(self, tags_frame: LabelFrame) -> None:
+        tags = self.fetch_tags_from_db()
+        for tag in tags:
+            Checkbutton(tags_frame, text=tag.name, variable=tag.is_selected).grid()
 
     @staticmethod
     def fetch_tags_from_db() -> List[ContentTag]:
