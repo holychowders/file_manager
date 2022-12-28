@@ -28,7 +28,14 @@ def init_new_db() -> None:
 
 def fetch_tags_from_db() -> List[str]:
     cursor = get_db_cursor()
-    return cursor.execute("SELECT * FROM tags").fetchall()
+
+    tags = []
+    tag_rows = cursor.execute("SELECT * FROM tags").fetchall()
+
+    for tag in tag_rows:
+        tags.append(tag[0])
+
+    return tags
 
 
 def fetch_files_from_db() -> List[Tuple[str]]:
