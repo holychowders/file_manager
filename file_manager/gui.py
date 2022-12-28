@@ -69,11 +69,12 @@ class GUI:
         entry = Entry(frame, width=10)
         entry.grid(row=0, column=0, padx=5, pady=10, ipadx=1, ipady=1)
 
-        Button(frame, text="+/-", command=partial(self.toggle_tag, tags_frame, entry)).grid(
+        Button(frame, text="+/-", command=partial(self.toggle_tag_visibility_in_db, tags_frame, entry)).grid(
             row=0, column=1, padx=5, pady=5
         )
 
-    def toggle_tag(self, tags_frame: LabelFrame, entry: Entry) -> None:
+    def toggle_tag_visibility_in_db(self, tags_frame: LabelFrame, entry: Entry) -> None:
+        """Toggle the visibility of the tag itself on the UI."""
         target = entry.get()
 
         if not target:
