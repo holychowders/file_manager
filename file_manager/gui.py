@@ -120,9 +120,6 @@ class GUI:
                 ).grid()
 
     def toggle_tag_selection_in_db(self, tag: ContentTag) -> None:
-        print(tag)
-        print(tag.is_selected)
-        print(tag.is_selected.get())
         get_db_cursor().execute(
             f"UPDATE tags SET is_selected={tag.is_selected.get()} WHERE name='{tag.name}'"
         ).connection.commit()
