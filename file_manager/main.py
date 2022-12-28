@@ -1,11 +1,11 @@
 import sys
 
-from db import init_db
+import db
 from gui import GUI
 
 
 def main(debug: bool) -> None:
-    init_db()
+    db.init()
     GUI(debug).run()
 
 

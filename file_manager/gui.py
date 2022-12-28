@@ -5,15 +5,7 @@ from functools import partial
 from tkinter import TOP, Button, Checkbutton, Entry, IntVar, LabelFrame, N, Tk
 from typing import List
 
-from db import (
-    create_tag_in_db,
-    disable_tag_selection_in_db,
-    disable_tag_visibility_in_db,
-    enable_tag_visibility_in_db,
-    fetch_files_from_db,
-    fetch_tags_from_db,
-    get_db_cursor,
-)
+import db
 
 
 @dataclass
@@ -93,12 +85,12 @@ class GUI:
                 is_target_in_tags = True
 
                 if tag.is_hidden:
-                    enable_tag_visibility_in_db(target)
+                    db.enable_tag_visibility(target)
                 else:
-                    disable_tag_selection_in_db(target)
-                    disable_tag_visibility_in_db(target)
+                    db.disable_tag_selection(target)
+                    db.disable_tag_visibility(target)
         if not is_target_in_tags:
-            create_tag_in_db(target)
+            db.create_tag(target)
 
         self.update_tags_in_tags_frame(tags_frame)
 
@@ -122,7 +114,7 @@ class GUI:
                 ).grid()
 
     def toggle_tag_selection_in_db(self, tag: ContentTag) -> None:
-        get_db_cursor().execute(
+        db.get_cursor().execute(
             f"UPDATE tags SET is_selected={tag.is_selected.get()} WHERE name='{tag.name}'"
         ).connection.commit()
 
@@ -132,11 +124,11 @@ class GUI:
         self.init_tags_frame()
 
     def clear_tag_selections_in_db(self) -> None:
-        get_db_cursor().execute("UPDATE tags SET is_selected=0 ").connection.commit()
+        db.get_cursor().execute("UPDATE tags SET is_selected=0 ").connection.commit()
 
     @staticmethod
     def fetch_tags_from_db() -> List[ContentTag]:
-        tags = fetch_tags_from_db()
+        tags = db.fetch_tags()
         content_tags = []
 
         for tag, is_hidden, is_selected_in_db in tags:
@@ -162,7 +154,7 @@ class GUI:
 
     @staticmethod
     def fetch_files_from_db() -> List[FileResult]:
-        files = fetch_files_from_db()
+        files = db.fetch_files()
         file_results = []
 
         for name, path in files:
@@ -181,5 +173,5 @@ class GUI:
 
 def debug_db() -> None:
     print("\nDB DEBUG:")
-    print("files:\n", fetch_files_from_db())
-    print("\ntags:\n", fetch_tags_from_db())
+    print("files:\n", db.fetch_files())
+    print("\ntags:\n", db.fetch_tags())
