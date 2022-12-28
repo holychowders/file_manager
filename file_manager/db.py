@@ -65,3 +65,7 @@ def create_tag(tag: str) -> None:
     get_db_cursor().execute(
         f"INSERT INTO tags(name, is_hidden, is_selected) VALUES ('{tag}', 0, 0)"
     ).connection.commit()
+
+
+def disable_tag_selection_in_db(tag: str) -> None:
+    get_db_cursor().execute(f"UPDATE tags SET is_selected=0 WHERE name='{tag}'").connection.commit()
