@@ -1,27 +1,11 @@
 import os
 from collections import namedtuple
-from dataclasses import dataclass
 from enum import Enum
 from functools import partial
 from logging import warning
-from tkinter import TOP, Button, Checkbutton, Entry, IntVar, LabelFrame, Menu, N, Tk
-from typing import List
+from tkinter import TOP, Button, Checkbutton, Entry, LabelFrame, Menu, N, Tk
 
 import db
-
-
-@dataclass
-class ContentTag:
-    name: str
-    is_hidden: bool
-    is_selected: IntVar
-
-
-@dataclass
-class FileResult:
-    name: str
-    path: str
-
 
 WidgetGridPosition = namedtuple("WidgetGridPosition", "row column")
 
@@ -117,7 +101,7 @@ class GUI:
         Button(
             frame,
             text="+/-",
-            command=partial(self.toggle_tag_visibility_in_db, tags_frame, entry),
+            command=partial(self.toggle_tag_is_visible, tags_frame, entry),
             bg=self.bg_color,
             fg=self.fg_color,
             activebackground=self.bg_color,
@@ -135,14 +119,14 @@ class GUI:
             activeforeground=self.fg_color,
         ).grid()
 
-    def toggle_tag_visibility_in_db(self, tags_frame: LabelFrame, entry: Entry) -> None:
+    def toggle_tag_is_visible(self, tags_frame: LabelFrame, entry: Entry) -> None:
         """Toggle the visibility of the tag itself on the UI."""
         target = entry.get()
 
         if not target:
             return
 
-        tags = self.fetch_tags_from_db()
+        tags = db.fetch_tags()
         is_target_in_tags = False
         for tag in tags:
             if tag.name == target:
@@ -168,14 +152,14 @@ class GUI:
             frame.pack_forget()
 
     def populate_tags_in_tags_frame(self, tags_frame: LabelFrame) -> None:
-        tags = self.fetch_tags_from_db()
+        tags = db.fetch_tags()
         for tag in tags:
             if not tag.is_hidden:
                 Checkbutton(
                     tags_frame,
                     text=tag.name,
                     variable=tag.is_selected,
-                    command=partial(self.toggle_tag_selection_in_db, tag),
+                    command=partial(db.toggle_tag_selection, tag),
                     selectcolor=self.bg_color,
                     bg=self.bg_color,
                     fg=self.fg_color,
@@ -183,31 +167,10 @@ class GUI:
                     activeforeground=self.fg_color,
                 ).grid()
 
-    def toggle_tag_selection_in_db(self, tag: ContentTag) -> None:
-        db.get_cursor().execute(
-            f"UPDATE tags SET is_selected={tag.is_selected.get()} WHERE name='{tag.name}'"
-        ).connection.commit()
-
     def clear_tag_selections(self) -> None:
-        self.clear_tag_selections_in_db()
+        db.clear_all_tag_selections()
         # Should there be a self.clear_frame(tags_frame) here?
         self.init_tags_frame()
-
-    def clear_tag_selections_in_db(self) -> None:
-        db.get_cursor().execute("UPDATE tags SET is_selected=0 ").connection.commit()
-
-    @staticmethod
-    def fetch_tags_from_db() -> List[ContentTag]:
-        tags = db.fetch_tags()
-        content_tags = []
-
-        for tag, is_hidden, is_selected_in_db in tags:
-            is_selected = IntVar()
-            is_selected.set(is_selected_in_db)
-
-            content_tags.append(ContentTag(name=tag, is_hidden=is_hidden, is_selected=is_selected))
-
-        return content_tags
 
     # File results stuff
 
@@ -220,7 +183,7 @@ class GUI:
             side=TOP, anchor=N, padx=5, pady=5, ipadx=1, ipady=1
         )
 
-        files = self.fetch_files_from_db()
+        files = db.fetch_files()
         for file in files:
             Button(
                 frame,
@@ -232,31 +195,15 @@ class GUI:
                 activeforeground=self.fg_color,
             ).pack()
 
-    @staticmethod
-    def fetch_files_from_db() -> List[FileResult]:
-        files = db.fetch_files()
-        file_results = []
-
-        for name, path in files:
-            file_results.append(FileResult(name, path))
-
-        return file_results
-
     # Debugging stuff
 
     def add_debug_button(self) -> None:
         Button(
             self.gui,
             text="Debug",
-            command=debug_db,
+            command=db.debug,
             bg=self.bg_color,
             fg=self.fg_color,
             activebackground=self.bg_color,
             activeforeground=self.fg_color,
         ).pack()
-
-
-def debug_db() -> None:
-    print("\nDB DEBUG:")
-    print("files:\n", db.fetch_files())
-    print("\ntags:\n", db.fetch_tags())
