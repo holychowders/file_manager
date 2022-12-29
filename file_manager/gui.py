@@ -14,10 +14,11 @@ Colorscheme = Enum("Colorscheme", ["LIGHT", "DARK"])
 
 # pylint: disable = R0903
 class GUI:
+    DEFAULT_COLORSCHEME = Colorscheme.LIGHT
     TAGS_FRAME_POS = WidgetGridPosition(0, 0)
     FILES_FRAME_POS = WidgetGridPosition(0, 1)
 
-    def __init__(self, colorscheme: Colorscheme = Colorscheme.LIGHT, debug: bool = False) -> None:
+    def __init__(self, colorscheme: Colorscheme = DEFAULT_COLORSCHEME, debug: bool = False) -> None:
         self._init_colorscheme(colorscheme)
         self._init_root()
         self._add_menu_bar()
@@ -48,9 +49,8 @@ class GUI:
                 self.bg_color = "white"
                 self.fg_color = "black"
             case other:
-                warning(f"Colorscheme '{other}' not valid. Using default.")
-                self.bg_color = "white"
-                self.fg_color = "black"
+                warning(f"Colorscheme '{other}' not valid. Using default '{self.DEFAULT_COLORSCHEME}'.")
+                self._init_colorscheme(self.DEFAULT_COLORSCHEME)
 
     def _add_menu_bar(self) -> None:
         menu_bar = Menu(self.gui, tearoff=0, bg=self.bg_color, fg=self.fg_color)
