@@ -35,13 +35,7 @@ class GUI:
     def __init__(self, colorscheme: Colorscheme = Colorscheme.LIGHT, debug: bool = False) -> None:
         self.init_colorscheme(colorscheme)
 
-        gui = Tk()
-        gui.title("File Manager")
-        gui.iconbitmap("assets/main-icon-512px-colored.ico")
-        gui.geometry("600x600")
-        gui.configure(bg=self.bg_color)
-
-        self.gui = gui
+        self.init_root()
 
         if debug:
             self.debug()
@@ -51,6 +45,15 @@ class GUI:
 
     def run(self) -> None:
         self.gui.mainloop()
+
+    def init_root(self) -> None:
+        gui = Tk()
+        gui.title("File Manager")
+        gui.iconbitmap("assets/main-icon-512px-colored.ico")
+        gui.geometry("600x600")
+        gui.configure(bg=self.bg_color)
+
+        self.gui: Tk = gui
 
     def init_colorscheme(self, colorscheme: Colorscheme) -> None:
         match colorscheme:
