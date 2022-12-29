@@ -6,7 +6,7 @@ from gui import GUI
 
 def main(debug: bool) -> None:
     db.init()
-    GUI(debug).run()
+    GUI(debug=debug).run()
 
 
 if __name__ == "__main__":
@@ -15,4 +15,4 @@ if __name__ == "__main__":
     except IndexError:
         DEBUG = False
 
-    main(DEBUG)
+    main(debug=DEBUG)

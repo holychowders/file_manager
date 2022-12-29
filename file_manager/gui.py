@@ -1,7 +1,9 @@
 import os
 from collections import namedtuple
 from dataclasses import dataclass
+from enum import Enum
 from functools import partial
+from logging import warning
 from tkinter import TOP, Button, Checkbutton, Entry, IntVar, LabelFrame, N, Tk
 from typing import List
 
@@ -23,16 +25,21 @@ class FileResult:
 
 WidgetGridPosition = namedtuple("WidgetGridPosition", "row column")
 
+Colorscheme = Enum("Colorscheme", ["LIGHT", "DARK"])
+
 
 class GUI:
     TAGS_FRAME_POS = WidgetGridPosition(0, 0)
     FILES_FRAME_POS = WidgetGridPosition(0, 1)
 
-    def __init__(self, debug: bool = False) -> None:
+    def __init__(self, colorscheme: Colorscheme = Colorscheme.LIGHT, debug: bool = False) -> None:
+        self.init_colorscheme(colorscheme)
+
         gui = Tk()
         gui.title("File Manager")
         gui.iconbitmap("assets/main-icon-512px-colored.ico")
         gui.geometry("600x600")
+        gui.configure(bg=self.bg_color)
 
         self.gui = gui
 
@@ -45,12 +52,25 @@ class GUI:
     def run(self) -> None:
         self.gui.mainloop()
 
+    def init_colorscheme(self, colorscheme: Colorscheme) -> None:
+        match colorscheme:
+            case Colorscheme.DARK:
+                self.bg_color = "black"
+                self.fg_color = "white"
+            case Colorscheme.LIGHT:
+                self.bg_color = "white"
+                self.fg_color = "black"
+            case other:
+                warning(f"Colorscheme '{other}' not valid. Using default.")
+                self.bg_color = "white"
+                self.fg_color = "black"
+
     # Tags stuff
 
     def init_tags_frame(self) -> None:
         row, column = self.TAGS_FRAME_POS
 
-        frame = LabelFrame(self.gui, text="Tags")
+        frame = LabelFrame(self.gui, text="Tags", bg=self.bg_color, fg=self.fg_color)
         frame.grid(row=row, column=column, padx=5, pady=5)
 
         self.add_tags_search_and_edit_subframe(frame)
@@ -58,18 +78,32 @@ class GUI:
         self.populate_tags_in_tags_frame(frame)
 
     def add_tags_search_and_edit_subframe(self, tags_frame: LabelFrame) -> None:
-        frame = LabelFrame(tags_frame, text="Search/Edit")
+        frame = LabelFrame(tags_frame, text="Search/Edit", bg=self.bg_color, fg=self.fg_color)
         frame.grid(padx=5, pady=5)
 
-        entry = Entry(frame, width=10)
+        entry = Entry(frame, width=10, bg=self.bg_color, fg=self.fg_color)
         entry.grid(row=0, column=0, padx=5, pady=10, ipadx=1, ipady=1)
 
-        Button(frame, text="+/-", command=partial(self.toggle_tag_visibility_in_db, tags_frame, entry)).grid(
-            row=0, column=1, padx=5, pady=5
-        )
+        Button(
+            frame,
+            text="+/-",
+            command=partial(self.toggle_tag_visibility_in_db, tags_frame, entry),
+            bg=self.bg_color,
+            fg=self.fg_color,
+            activebackground=self.bg_color,
+            activeforeground=self.fg_color,
+        ).grid(row=0, column=1, padx=5, pady=5)
 
     def add_tags_selection_clear_button(self, tags_frame: LabelFrame) -> None:
-        Button(tags_frame, text="Clear Selections", command=self.clear_tag_selections).grid()
+        Button(
+            tags_frame,
+            text="Clear Selections",
+            command=self.clear_tag_selections,
+            bg=self.bg_color,
+            fg=self.fg_color,
+            activebackground=self.bg_color,
+            activeforeground=self.fg_color,
+        ).grid()
 
     def toggle_tag_visibility_in_db(self, tags_frame: LabelFrame, entry: Entry) -> None:
         """Toggle the visibility of the tag itself on the UI."""
@@ -111,6 +145,11 @@ class GUI:
                     text=tag.name,
                     variable=tag.is_selected,
                     command=partial(self.toggle_tag_selection_in_db, tag),
+                    selectcolor=self.bg_color,
+                    bg=self.bg_color,
+                    fg=self.fg_color,
+                    activebackground=self.bg_color,
+                    activeforeground=self.fg_color,
                 ).grid()
 
     def toggle_tag_selection_in_db(self, tag: ContentTag) -> None:
@@ -143,14 +182,24 @@ class GUI:
 
     def add_files_frame(self) -> None:
         row, column = self.FILES_FRAME_POS
-        frame = LabelFrame(self.gui, text="Files")
+        frame = LabelFrame(self.gui, text="Files", bg=self.bg_color, fg=self.fg_color)
         frame.grid(row=row, column=column, padx=5, pady=5)
 
-        Entry(frame, width=35).pack(side=TOP, anchor=N, padx=5, pady=5, ipadx=1, ipady=1)
+        Entry(frame, width=35, bg=self.bg_color, fg=self.fg_color).pack(
+            side=TOP, anchor=N, padx=5, pady=5, ipadx=1, ipady=1
+        )
 
         files = self.fetch_files_from_db()
         for file in files:
-            Button(frame, text=file.name, command=partial(os.startfile, file.path)).pack(padx=5, pady=5)
+            Button(
+                frame,
+                text=file.name,
+                command=partial(os.startfile, file.path),
+                bg=self.bg_color,
+                fg=self.fg_color,
+                activebackground=self.bg_color,
+                activeforeground=self.fg_color,
+            ).pack()
 
     @staticmethod
     def fetch_files_from_db() -> List[FileResult]:
@@ -168,7 +217,15 @@ class GUI:
         self.add_debug_button()
 
     def add_debug_button(self) -> None:
-        Button(self.gui, text="Debug", command=debug_db).pack()
+        Button(
+            self.gui,
+            text="Debug",
+            command=debug_db,
+            bg=self.bg_color,
+            fg=self.fg_color,
+            activebackground=self.bg_color,
+            activeforeground=self.fg_color,
+        ).pack()
 
 
 def debug_db() -> None:
