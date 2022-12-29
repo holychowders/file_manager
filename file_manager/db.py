@@ -1,3 +1,4 @@
+import json
 import os
 import sqlite3
 from dataclasses import dataclass
@@ -19,6 +20,7 @@ class Tag:
 class File:
     name: str
     path: str
+    tags: List[str]
 
 
 def init() -> None:
@@ -36,8 +38,8 @@ def fetch_files() -> List[File]:
     files = _fetch_files()
     file_results = []
 
-    for name, path in files:
-        file_results.append(File(name, path))
+    for name, path, tags in files:
+        file_results.append(File(name, path, json.loads(tags)))
 
     return file_results
 
@@ -89,9 +91,9 @@ def clear_all_tag_selections() -> None:
 
 def _create_new() -> None:
     db_commands = (
-        "CREATE TABLE files(name TEXT NOT NULL, path TEXT NOT NULL)",
+        "CREATE TABLE files(name TEXT NOT NULL, path TEXT NOT NULL, tags JSON_DUMPS NOT NULL)",
         "CREATE TABLE tags(name TEXT NOT NULL, is_hidden BOOLEAN NOT NULL, is_selected BOOLEAN NOT NULL)",
-        "INSERT INTO files(name, path) VALUES ('sample_video', 'sample_video.mp4'), ('non_existent_video', 'video.dne')",
+        f"INSERT INTO files(name, path, tags) VALUES ('sample_video', 'sample_video.mp4', '{json.dumps(('Favorite', 'Archive'))}'), ('non_existent_video', 'video.dne', '{json.dumps(('Archive',))}')",
         "INSERT INTO tags(name, is_hidden, is_selected) VALUES ('Favorite', 0, 0), ('Archive', 0, 0)",
     )
 
@@ -107,7 +109,7 @@ def _fetch_tags() -> List[Tuple[str, bool, bool]]:
     return _get_cursor().execute("SELECT * FROM tags").fetchall()
 
 
-def _fetch_files() -> List[Tuple[str, str]]:
+def _fetch_files() -> List[Tuple[str, str, str]]:
     return _get_cursor().execute("SELECT * FROM files").fetchall()
 
 
