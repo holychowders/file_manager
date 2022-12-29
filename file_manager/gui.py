@@ -12,22 +12,23 @@ WidgetGridPosition = namedtuple("WidgetGridPosition", "row column")
 Colorscheme = Enum("Colorscheme", ["LIGHT", "DARK"])
 
 
+# pylint: disable = R0903
 class GUI:
     TAGS_FRAME_POS = WidgetGridPosition(0, 0)
     FILES_FRAME_POS = WidgetGridPosition(0, 1)
 
     def __init__(self, colorscheme: Colorscheme = Colorscheme.LIGHT, debug: bool = False) -> None:
-        self.init_colorscheme(colorscheme)
-        self.init_root()
-        self.add_menu_bar()
-        self.handle_debug_init(debug)
-        self.init_tags_frame()
-        self.add_files_frame()
+        self._init_colorscheme(colorscheme)
+        self._init_root()
+        self._add_menu_bar()
+        self._handle_debug_init(debug)
+        self._init_tags_frame()
+        self._add_files_frame()
 
     def run(self) -> None:
         self.gui.mainloop()
 
-    def init_root(self) -> None:
+    def _init_root(self) -> None:
         gui = Tk()
         gui.title("File Manager")
         gui.iconbitmap("assets/main-icon-512px-colored.ico")
@@ -36,7 +37,7 @@ class GUI:
 
         self.gui: Tk = gui
 
-    def init_colorscheme(self, colorscheme: Colorscheme) -> None:
+    def _init_colorscheme(self, colorscheme: Colorscheme) -> None:
         self.colorscheme = colorscheme
 
         match self.colorscheme:
@@ -51,47 +52,47 @@ class GUI:
                 self.bg_color = "white"
                 self.fg_color = "black"
 
-    def add_menu_bar(self) -> None:
+    def _add_menu_bar(self) -> None:
         menu_bar = Menu(self.gui, tearoff=0, bg=self.bg_color, fg=self.fg_color)
 
         # "View" -> "Colorscheme" -> colorschemes
         view = Menu(menu_bar, tearoff=0, bg=self.bg_color, fg=self.fg_color)
         colorscheme = Menu(view, tearoff=0, bg=self.bg_color, fg=self.fg_color)
-        colorscheme.add_command(label="Light", command=partial(self.switch_colorscheme, Colorscheme.LIGHT))
-        colorscheme.add_command(label="Dark", command=partial(self.switch_colorscheme, Colorscheme.DARK))
+        colorscheme.add_command(label="Light", command=partial(self._switch_colorscheme, Colorscheme.LIGHT))
+        colorscheme.add_command(label="Dark", command=partial(self._switch_colorscheme, Colorscheme.DARK))
 
         view.add_cascade(label="Colorscheme", menu=colorscheme, background=self.bg_color, foreground=self.fg_color)
         menu_bar.add_cascade(label="View", menu=view, background=self.bg_color, foreground=self.fg_color)
 
         self.gui.configure(menu=menu_bar)
 
-    def switch_colorscheme(self, colorscheme: Colorscheme) -> None:
-        self.reinit(colorscheme=colorscheme, debug=self.debug)
+    def _switch_colorscheme(self, colorscheme: Colorscheme) -> None:
+        self._reinit(colorscheme=colorscheme, debug=self.debug)
 
-    def reinit(self, colorscheme: Colorscheme, debug: bool) -> None:
+    def _reinit(self, colorscheme: Colorscheme, debug: bool) -> None:
         self.gui.destroy()
         # pylint: disable = C2801
         self.__init__(colorscheme=colorscheme, debug=debug)  # type: ignore[misc]
 
-    def handle_debug_init(self, debug: bool) -> None:
+    def _handle_debug_init(self, debug: bool) -> None:
         self.debug = debug
 
         if self.debug:
-            self.add_debug_button()
+            self._add_debug_button()
 
     # Tags stuff
 
-    def init_tags_frame(self) -> None:
+    def _init_tags_frame(self) -> None:
         row, column = self.TAGS_FRAME_POS
 
         frame = LabelFrame(self.gui, text="Tags", bg=self.bg_color, fg=self.fg_color)
         frame.grid(row=row, column=column, padx=5, pady=5)
 
-        self.add_tags_search_and_edit_subframe(frame)
-        self.add_tags_selection_clear_button(frame)
-        self.populate_tags_in_tags_frame(frame)
+        self._add_tags_search_and_edit_subframe(frame)
+        self._add_tags_selection_clear_button(frame)
+        self._populate_tags_in_tags_frame(frame)
 
-    def add_tags_search_and_edit_subframe(self, tags_frame: LabelFrame) -> None:
+    def _add_tags_search_and_edit_subframe(self, tags_frame: LabelFrame) -> None:
         frame = LabelFrame(tags_frame, text="Search/Edit", bg=self.bg_color, fg=self.fg_color)
         frame.grid(padx=5, pady=5)
 
@@ -101,25 +102,25 @@ class GUI:
         Button(
             frame,
             text="+/-",
-            command=partial(self.toggle_tag_is_visible, tags_frame, entry),
+            command=partial(self._toggle_tag_is_visible, tags_frame, entry),
             bg=self.bg_color,
             fg=self.fg_color,
             activebackground=self.bg_color,
             activeforeground=self.fg_color,
         ).grid(row=0, column=1, padx=5, pady=5)
 
-    def add_tags_selection_clear_button(self, tags_frame: LabelFrame) -> None:
+    def _add_tags_selection_clear_button(self, tags_frame: LabelFrame) -> None:
         Button(
             tags_frame,
             text="Clear Selections",
-            command=self.clear_tag_selections,
+            command=self._clear_tag_selections,
             bg=self.bg_color,
             fg=self.fg_color,
             activebackground=self.bg_color,
             activeforeground=self.fg_color,
         ).grid()
 
-    def toggle_tag_is_visible(self, tags_frame: LabelFrame, entry: Entry) -> None:
+    def _toggle_tag_is_visible(self, tags_frame: LabelFrame, entry: Entry) -> None:
         """Toggle the visibility of the tag itself on the UI."""
         target = entry.get()
 
@@ -140,18 +141,18 @@ class GUI:
         if not is_target_in_tags:
             db.create_tag(target)
 
-        self.update_tags_in_tags_frame(tags_frame)
+        self._update_tags_in_tags_frame(tags_frame)
 
-    def update_tags_in_tags_frame(self, frame: LabelFrame) -> None:
-        self.clear_frame(frame)
-        self.init_tags_frame()
+    def _update_tags_in_tags_frame(self, frame: LabelFrame) -> None:
+        self._clear_frame(frame)
+        self._init_tags_frame()
 
-    def clear_frame(self, frame: LabelFrame) -> None:
+    def _clear_frame(self, frame: LabelFrame) -> None:
         frame.destroy()
         if hasattr(frame, "pack_forget"):
             frame.pack_forget()
 
-    def populate_tags_in_tags_frame(self, tags_frame: LabelFrame) -> None:
+    def _populate_tags_in_tags_frame(self, tags_frame: LabelFrame) -> None:
         tags = db.fetch_tags()
         for tag in tags:
             if not tag.is_hidden:
@@ -167,14 +168,14 @@ class GUI:
                     activeforeground=self.fg_color,
                 ).grid()
 
-    def clear_tag_selections(self) -> None:
+    def _clear_tag_selections(self) -> None:
         db.clear_all_tag_selections()
         # Should there be a self.clear_frame(tags_frame) here?
-        self.init_tags_frame()
+        self._init_tags_frame()
 
     # File results stuff
 
-    def add_files_frame(self) -> None:
+    def _add_files_frame(self) -> None:
         row, column = self.FILES_FRAME_POS
         frame = LabelFrame(self.gui, text="Files", bg=self.bg_color, fg=self.fg_color)
         frame.grid(row=row, column=column, padx=5, pady=5)
@@ -197,7 +198,7 @@ class GUI:
 
     # Debugging stuff
 
-    def add_debug_button(self) -> None:
+    def _add_debug_button(self) -> None:
         Button(
             self.gui,
             text="Debug",
