@@ -96,7 +96,7 @@ class GUI:
         frame = LabelFrame(tags_frame, text="Search/Edit", bg=self.bg_color, fg=self.fg_color)
         frame.grid(padx=5, pady=5)
 
-        entry = Entry(frame, width=10, bg=self.bg_color, fg=self.fg_color)
+        entry = Entry(frame, width=10, insertbackground=self.fg_color, bg=self.bg_color, fg=self.fg_color)
         entry.grid(row=0, column=0, padx=5, pady=10, ipadx=1, ipady=1)
 
         Button(
@@ -180,7 +180,7 @@ class GUI:
         frame = LabelFrame(self.gui, text="Files", bg=self.bg_color, fg=self.fg_color)
         frame.grid(row=row, column=column, padx=5, pady=5)
 
-        Entry(frame, width=35, bg=self.bg_color, fg=self.fg_color).pack(
+        Entry(frame, width=35, insertbackground=self.fg_color, bg=self.bg_color, fg=self.fg_color).pack(
             side=TOP, anchor=N, padx=5, pady=5, ipadx=1, ipady=1
         )
 
