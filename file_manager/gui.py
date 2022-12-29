@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 from functools import partial
 from logging import warning
-from tkinter import TOP, Button, Checkbutton, Entry, IntVar, LabelFrame, N, Tk
+from tkinter import TOP, Button, Checkbutton, Entry, IntVar, LabelFrame, Menu, N, Tk
 from typing import List
 
 import db
@@ -34,12 +34,9 @@ class GUI:
 
     def __init__(self, colorscheme: Colorscheme = Colorscheme.LIGHT, debug: bool = False) -> None:
         self.init_colorscheme(colorscheme)
-
         self.init_root()
-
-        if debug:
-            self.debug()
-
+        self.add_menu_bar()
+        self.handle_debug_init(debug)
         self.init_tags_frame()
         self.add_files_frame()
 
@@ -56,7 +53,9 @@ class GUI:
         self.gui: Tk = gui
 
     def init_colorscheme(self, colorscheme: Colorscheme) -> None:
-        match colorscheme:
+        self.colorscheme = colorscheme
+
+        match self.colorscheme:
             case Colorscheme.DARK:
                 self.bg_color = "black"
                 self.fg_color = "white"
@@ -67,6 +66,34 @@ class GUI:
                 warning(f"Colorscheme '{other}' not valid. Using default.")
                 self.bg_color = "white"
                 self.fg_color = "black"
+
+    def add_menu_bar(self) -> None:
+        menu_bar = Menu(self.gui, tearoff=0, bg=self.bg_color, fg=self.fg_color)
+
+        # "View" -> "Colorscheme" -> colorschemes
+        view = Menu(menu_bar, tearoff=0, bg=self.bg_color, fg=self.fg_color)
+        colorscheme = Menu(view, tearoff=0, bg=self.bg_color, fg=self.fg_color)
+        colorscheme.add_command(label="Light", command=partial(self.switch_colorscheme, Colorscheme.LIGHT))
+        colorscheme.add_command(label="Dark", command=partial(self.switch_colorscheme, Colorscheme.DARK))
+
+        view.add_cascade(label="Colorscheme", menu=colorscheme, background=self.bg_color, foreground=self.fg_color)
+        menu_bar.add_cascade(label="View", menu=view, background=self.bg_color, foreground=self.fg_color)
+
+        self.gui.configure(menu=menu_bar)
+
+    def switch_colorscheme(self, colorscheme: Colorscheme) -> None:
+        self.reinit(colorscheme=colorscheme, debug=self.debug)
+
+    def reinit(self, colorscheme: Colorscheme, debug: bool) -> None:
+        self.gui.destroy()
+        # pylint: disable = C2801
+        self.__init__(colorscheme=colorscheme, debug=debug)  # type: ignore[misc]
+
+    def handle_debug_init(self, debug: bool) -> None:
+        self.debug = debug
+
+        if self.debug:
+            self.add_debug_button()
 
     # Tags stuff
 
@@ -137,7 +164,8 @@ class GUI:
 
     def clear_frame(self, frame: LabelFrame) -> None:
         frame.destroy()
-        frame.pack_forget()
+        if hasattr(frame, "pack_forget"):
+            frame.pack_forget()
 
     def populate_tags_in_tags_frame(self, tags_frame: LabelFrame) -> None:
         tags = self.fetch_tags_from_db()
@@ -215,9 +243,6 @@ class GUI:
         return file_results
 
     # Debugging stuff
-
-    def debug(self) -> None:
-        self.add_debug_button()
 
     def add_debug_button(self) -> None:
         Button(
