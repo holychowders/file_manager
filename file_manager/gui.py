@@ -3,7 +3,20 @@ from collections import namedtuple
 from enum import Enum
 from functools import partial
 from logging import warning
-from tkinter import TOP, Button, Checkbutton, E, Entry, LabelFrame, Menu, N, S, Tk, W
+from tkinter import (
+    TOP,
+    Button,
+    Checkbutton,
+    E,
+    Entry,
+    LabelFrame,
+    Menu,
+    N,
+    S,
+    StringVar,
+    Tk,
+    W,
+)
 from typing import List
 
 import db
@@ -84,7 +97,7 @@ class GUI:
 
     # Tags stuff
 
-    def _init_tags_frame(self) -> None:
+    def _init_tags_frame(self, current_tags_search: str = "", was_focused_last: bool = False) -> None:
         row, column = self.TAGS_FRAME_POS
 
         frame = LabelFrame(self.gui, text="Tags", bg=self.bg_color, fg=self.fg_color)
@@ -92,17 +105,33 @@ class GUI:
 
         self.tags_frame = frame
 
-        self._add_tags_search_and_edit_subframe()
+        self.tags_search = StringVar()
+        self._add_tags_search_and_edit_subframe(
+            current_tags_search=current_tags_search, was_focused_last=was_focused_last
+        )
         self._add_tags_selection_clear_button()
         self._populate_tags_in_tags_frame()
 
-    def _add_tags_search_and_edit_subframe(self) -> None:
+    def _add_tags_search_and_edit_subframe(self, current_tags_search: str, was_focused_last: bool) -> None:
         frame = LabelFrame(self.tags_frame, text="Search/Edit", bg=self.bg_color, fg=self.fg_color)
         frame.grid(padx=5, pady=5)
 
-        entry = Entry(frame, width=10, insertbackground=self.fg_color, bg=self.bg_color, fg=self.fg_color)
+        entry = Entry(
+            frame,
+            textvariable=self.tags_search,
+            width=10,
+            insertbackground=self.fg_color,
+            bg=self.bg_color,
+            fg=self.fg_color,
+        )
         entry.bind("<Return>", lambda _event: self._toggle_tag_visibility(entry))
         entry.grid(row=0, column=0, padx=5, pady=10, ipadx=1, ipady=1)
+
+        entry.insert(0, current_tags_search)
+        if was_focused_last:
+            entry.focus()
+
+        self.tags_search.trace_add("write", lambda *_args: self._handle_tag_search())
 
         Button(
             frame,
@@ -113,6 +142,10 @@ class GUI:
             activebackground=self.bg_color,
             activeforeground=self.fg_color,
         ).grid(row=0, column=1, padx=5, pady=5)
+
+    def _handle_tag_search(self) -> None:
+        self._clear_frame(self.tags_frame)
+        self._init_tags_frame(current_tags_search=self.tags_search.get(), was_focused_last=True)
 
     def _add_tags_selection_clear_button(self) -> None:
         Button(
@@ -158,12 +191,12 @@ class GUI:
             frame.pack_forget()
 
     def _populate_tags_in_tags_frame(self) -> None:
-        for tag in self._get_visible_tags():
+        for tag in self._get_visible_and_matching_tags():
             Checkbutton(
                 self.tags_frame,
                 text=tag.name,
                 variable=tag.is_selected,
-                command=partial(self.handle_tag_selection, tag),
+                command=partial(self._handle_tag_selection, tag),
                 anchor=W,
                 selectcolor=self.bg_color,
                 bg=self.bg_color,
@@ -172,7 +205,7 @@ class GUI:
                 activeforeground=self.fg_color,
             ).grid(padx=5, sticky=E + W)
 
-    def handle_tag_selection(self, tag: db.Tag) -> None:
+    def _handle_tag_selection(self, tag: db.Tag) -> None:
         db.toggle_tag_selection(tag)
         self._clear_frame(self.files_frame)
         self._init_files_frame()
@@ -194,6 +227,18 @@ class GUI:
                 visible_tags.append(tag)
 
         return visible_tags
+
+    def _get_visible_and_matching_tags(self) -> List[db.Tag]:
+        tags = []
+        search = set(self.tags_search.get())
+
+        for tag in db.fetch_tags():
+            name = set(tag.name)
+
+            if not tag.is_hidden and search.issubset(name):
+                tags.append(tag)
+
+        return tags
 
     def _get_selected_tag_names(self) -> List[str]:
         selected_tags = []
