@@ -3,7 +3,7 @@ from collections import namedtuple
 from enum import Enum
 from functools import partial
 from logging import warning
-from tkinter import TOP, Button, Checkbutton, Entry, LabelFrame, Menu, N, Tk
+from tkinter import TOP, Button, Checkbutton, E, Entry, LabelFrame, Menu, N, S, Tk, W
 from typing import List
 
 import db
@@ -86,7 +86,7 @@ class GUI:
         row, column = self.TAGS_FRAME_POS
 
         frame = LabelFrame(self.gui, text="Tags", bg=self.bg_color, fg=self.fg_color)
-        frame.grid(row=row, column=column, padx=5, pady=5)
+        frame.grid(row=row, column=column, padx=5, pady=5, sticky=E + W + N + S)
 
         self.tags_frame = frame
 
@@ -120,7 +120,7 @@ class GUI:
             fg=self.fg_color,
             activebackground=self.bg_color,
             activeforeground=self.fg_color,
-        ).grid()
+        ).grid(padx=3, pady=(0, 3), sticky=E + W)
 
     def _toggle_tag_is_visible(self, entry: Entry) -> None:
         """Toggle the visibility of the tag itself on the UI."""
@@ -161,12 +161,13 @@ class GUI:
                 text=tag.name,
                 variable=tag.is_selected,
                 command=partial(self.handle_tag_selection, tag),
+                anchor=W,
                 selectcolor=self.bg_color,
                 bg=self.bg_color,
                 fg=self.fg_color,
                 activebackground=self.bg_color,
                 activeforeground=self.fg_color,
-            ).grid()
+            ).grid(padx=5, sticky=E + W)
 
     def handle_tag_selection(self, tag: db.Tag) -> None:
         db.toggle_tag_selection(tag)
@@ -206,7 +207,7 @@ class GUI:
         row, column = self.FILES_FRAME_POS
 
         frame = LabelFrame(self.gui, text="Files", bg=self.bg_color, fg=self.fg_color)
-        frame.grid(row=row, column=column, padx=5, pady=5)
+        frame.grid(row=row, column=column, padx=5, pady=5, sticky=E + W + N + S)
 
         Entry(frame, width=35, insertbackground=self.fg_color, bg=self.bg_color, fg=self.fg_color).pack(
             side=TOP, anchor=N, padx=5, pady=5, ipadx=1, ipady=1
@@ -224,7 +225,7 @@ class GUI:
                     fg=self.fg_color,
                     activebackground=self.bg_color,
                     activeforeground=self.fg_color,
-                ).pack()
+                ).pack(fill="x", padx=3, pady=3)
 
         self.files_frame = frame
 
