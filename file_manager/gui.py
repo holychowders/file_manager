@@ -34,7 +34,6 @@ class GUI:
         gui = Tk()
         gui.title("File Manager")
         gui.iconbitmap("assets/main-icon-512px-colored.ico")
-        gui.geometry("600x600")
         gui.configure(bg=self.bg_color)
 
         self.gui: Tk = gui
