@@ -232,8 +232,15 @@ class GUI:
         tags = []
         search = set(self.tags_search.get())
 
+        # Become case-sensitive if at least one character in the search is uppercase.
+        case_sensitive = False
+        for char in search:
+            if char.isupper():
+                case_sensitive = True
+                break
+
         for tag in db.fetch_tags():
-            name = set(tag.name)
+            name = set(tag.name if case_sensitive else tag.name.lower())
 
             if not tag.is_hidden and search.issubset(name):
                 tags.append(tag)
