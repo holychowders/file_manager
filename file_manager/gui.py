@@ -35,6 +35,8 @@ class GUI:
         gui.title("File Manager")
         gui.iconbitmap("assets/main-icon-512px-colored.ico")
         gui.configure(bg=self.bg_color)
+        gui.rowconfigure(0, weight=1)
+        gui.columnconfigure(1, weight=1)
 
         self.gui: Tk = gui
 
@@ -210,7 +212,7 @@ class GUI:
         frame.grid(row=row, column=column, padx=5, pady=5, sticky=E + W + N + S)
 
         Entry(frame, width=35, insertbackground=self.fg_color, bg=self.bg_color, fg=self.fg_color).pack(
-            side=TOP, anchor=N, padx=5, pady=5, ipadx=1, ipady=1
+            side=TOP, anchor=N, fill="x", padx=5, pady=5, ipadx=1, ipady=1
         )
 
         selected_tags = set(self._get_selected_tag_names())
