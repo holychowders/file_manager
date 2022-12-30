@@ -101,13 +101,13 @@ class GUI:
         frame.grid(padx=5, pady=5)
 
         entry = Entry(frame, width=10, insertbackground=self.fg_color, bg=self.bg_color, fg=self.fg_color)
-        entry.bind("<Return>", lambda _event: self._toggle_tag_is_visible(entry))
+        entry.bind("<Return>", lambda _event: self._toggle_tag_visibility(entry))
         entry.grid(row=0, column=0, padx=5, pady=10, ipadx=1, ipady=1)
 
         Button(
             frame,
             text="+/-",
-            command=partial(self._toggle_tag_is_visible, entry),
+            command=partial(self._toggle_tag_visibility, entry),
             bg=self.bg_color,
             fg=self.fg_color,
             activebackground=self.bg_color,
@@ -125,7 +125,7 @@ class GUI:
             activeforeground=self.fg_color,
         ).grid(padx=3, pady=(0, 3), sticky=E + W)
 
-    def _toggle_tag_is_visible(self, entry: Entry) -> None:
+    def _toggle_tag_visibility(self, entry: Entry) -> None:
         """Toggle the visibility of the tag itself on the UI."""
         target = entry.get()
 
