@@ -1,4 +1,5 @@
 import os
+import tkinter
 from collections import namedtuple
 from enum import Enum
 from functools import partial
@@ -9,6 +10,7 @@ from tkinter import (
     Checkbutton,
     E,
     Entry,
+    Label,
     LabelFrame,
     Menu,
     N,
@@ -31,6 +33,7 @@ class GUI:
     DEFAULT_COLORSCHEME = Colorscheme.LIGHT
     TAGS_FRAME_POS = WidgetGridPosition(0, 0)
     FILES_FRAME_POS = WidgetGridPosition(0, 1)
+    SELECTED_FILE_FRAME_POS = WidgetGridPosition(0, 2)
 
     def __init__(self, colorscheme: Colorscheme = DEFAULT_COLORSCHEME, debug: bool = False) -> None:
         self._init_colorscheme(colorscheme)
@@ -39,6 +42,7 @@ class GUI:
         self._handle_debug_init(debug)
         self._init_tags_frame()
         self._init_files_frame()
+        self._init_selected_file_frame()
 
     def run(self) -> None:
         self.gui.mainloop()
@@ -259,6 +263,8 @@ class GUI:
     # File results stuff
 
     def _init_files_frame(self) -> None:
+        self.selected_file = None
+
         row, column = self.FILES_FRAME_POS
 
         frame = LabelFrame(self.gui, text="Files", bg=self.bg_color, fg=self.fg_color)
@@ -272,7 +278,7 @@ class GUI:
 
         for file in db.fetch_files():
             if selected_tags.issubset(file.tags):
-                Button(
+                button = Button(
                     frame,
                     text=file.name,
                     command=partial(os.startfile, file.path),
@@ -280,9 +286,37 @@ class GUI:
                     fg=self.fg_color,
                     activebackground=self.bg_color,
                     activeforeground=self.fg_color,
-                ).pack(fill="x", padx=3, pady=3)
+                )
+                button.pack(fill="x", padx=3, pady=3)
+                button.bind("<Button-3>", partial(self._update_selected_file_frame, file))
 
         self.files_frame = frame
+
+    def _update_selected_file_frame(self, file: db.File, _args: tkinter.Event) -> None:
+        # pylint: disable = W0201
+        self.selected_file = file
+        self._clear_frame(self.selected_file_frame)
+        self._init_selected_file_frame()
+
+    def _init_selected_file_frame(self) -> None:
+        row, column = self.SELECTED_FILE_FRAME_POS
+
+        frame = LabelFrame(self.gui, text="Selected File", bg=self.bg_color, fg=self.fg_color)
+        frame.grid(row=row, column=column, padx=5, pady=5, sticky=E + W + N + S)
+
+        file = self.selected_file
+
+        if not file:
+            Label(frame, text="No file selected", padx=5, pady=5, bg=self.bg_color, fg=self.fg_color).pack(
+                fill="x", padx=5, pady=5
+            )
+        else:
+            for info in file.get_display_info():
+                info_frame = LabelFrame(frame, text=info.title, padx=5, bg=self.bg_color, fg=self.fg_color)
+                info_frame.pack(fill="x", padx=5, pady=5)
+                Label(info_frame, text=info.info, padx=5, bg=self.bg_color, fg=self.fg_color).pack(padx=5, pady=5)
+
+        self.selected_file_frame = frame
 
     # Debugging stuff
 

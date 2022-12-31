@@ -17,10 +17,22 @@ class Tag:
 
 
 @dataclass
+class DisplayInfo:
+    title: str
+    info: str
+
+
+@dataclass
 class File:
     name: str
     path: str
     tags: List[str]
+
+    def get_display_info(self) -> Tuple[DisplayInfo, ...]:
+        tags_info = ""
+        for tag in self.tags:
+            tags_info += f"{tag}, " if tag != self.tags[-1] else tag
+        return DisplayInfo("Name", self.name), DisplayInfo("Path", self.path), DisplayInfo("Tags", tags_info)
 
 
 def init() -> None:
@@ -93,7 +105,7 @@ def _create_new() -> None:
     db_commands = (
         "CREATE TABLE files(name TEXT NOT NULL, path TEXT NOT NULL, tags JSON_DUMPS NOT NULL)",
         "CREATE TABLE tags(name TEXT NOT NULL, is_hidden BOOLEAN NOT NULL, is_selected BOOLEAN NOT NULL)",
-        f"INSERT INTO files(name, path, tags) VALUES ('sample_video', 'sample_video.mp4', '{json.dumps(('Favorite', 'Archive'))}'), ('non_existent_video', 'video.dne', '{json.dumps(('Archive',))}')",
+        f"INSERT INTO files(name, path, tags) VALUES ('somewhat_really_long_sample_video_name', 'somewhat_really_long_sample_video_name.mp4', '{json.dumps(('Favorite', 'Archive'))}'), ('non_existent_video', 'video.dne', '{json.dumps(('Archive',))}')",
         "INSERT INTO tags(name, is_hidden, is_selected) VALUES ('Favorite', 0, 0), ('Archive', 0, 0)",
     )
 
