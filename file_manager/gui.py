@@ -27,6 +27,12 @@ WidgetGridPosition = namedtuple("WidgetGridPosition", "row column")
 
 Colorscheme = Enum("Colorscheme", ["LIGHT", "DARK"])
 
+DEFAULT_PADX = 5
+DEFAULT_PADY = 5
+
+DEFAULT_BUTTON_PADX = 3
+DEFAULT_BUTTON_PADY = 3
+
 
 # pylint: disable = R0902, R0903
 class GUI:
@@ -105,7 +111,7 @@ class GUI:
         row, column = self.TAGS_FRAME_POS
 
         frame = LabelFrame(self.gui, text="Tags", bg=self.bg_color, fg=self.fg_color)
-        frame.grid(row=row, column=column, padx=5, pady=5, sticky=E + W + N + S)
+        frame.grid(row=row, column=column, padx=DEFAULT_PADX, pady=DEFAULT_PADY, sticky=E + W + N + S)
 
         self.tags_frame = frame
 
@@ -118,7 +124,7 @@ class GUI:
 
     def _add_tags_search_and_edit_subframe(self, current_tags_search: str, was_focused_last: bool) -> None:
         frame = LabelFrame(self.tags_frame, text="Search/Edit", bg=self.bg_color, fg=self.fg_color)
-        frame.grid(padx=5, pady=5)
+        frame.grid(padx=DEFAULT_PADX, pady=DEFAULT_PADY)
 
         entry = Entry(
             frame,
@@ -129,7 +135,7 @@ class GUI:
             fg=self.fg_color,
         )
         entry.bind("<Return>", lambda _event: self._toggle_tag_visibility(entry))
-        entry.grid(row=0, column=0, padx=5, pady=10, ipadx=1, ipady=1)
+        entry.grid(row=0, column=0, padx=DEFAULT_PADX, pady=10, ipadx=1, ipady=1)
 
         entry.insert(0, current_tags_search)
         if was_focused_last:
@@ -145,7 +151,7 @@ class GUI:
             fg=self.fg_color,
             activebackground=self.bg_color,
             activeforeground=self.fg_color,
-        ).grid(row=0, column=1, padx=5, pady=5)
+        ).grid(row=0, column=1, padx=DEFAULT_BUTTON_PADX, pady=DEFAULT_BUTTON_PADY)
 
     def _handle_tag_search(self) -> None:
         self._clear_frame(self.tags_frame)
@@ -160,7 +166,7 @@ class GUI:
             fg=self.fg_color,
             activebackground=self.bg_color,
             activeforeground=self.fg_color,
-        ).grid(padx=3, pady=(0, 3), sticky=E + W)
+        ).grid(padx=DEFAULT_BUTTON_PADX, pady=(0, DEFAULT_BUTTON_PADY), sticky=E + W)
 
     def _toggle_tag_visibility(self, entry: Entry) -> None:
         """Toggle the visibility of the tag itself on the UI."""
@@ -207,7 +213,7 @@ class GUI:
                 fg=self.fg_color,
                 activebackground=self.bg_color,
                 activeforeground=self.fg_color,
-            ).grid(padx=5, sticky=E + W)
+            ).grid(padx=DEFAULT_PADX, sticky=E + W)
 
     def _handle_tag_selection(self, tag: db.Tag) -> None:
         db.toggle_tag_selection(tag)
@@ -268,10 +274,10 @@ class GUI:
         row, column = self.FILES_FRAME_POS
 
         frame = LabelFrame(self.gui, text="Files", bg=self.bg_color, fg=self.fg_color)
-        frame.grid(row=row, column=column, padx=5, pady=5, sticky=E + W + N + S)
+        frame.grid(row=row, column=column, padx=DEFAULT_PADX, pady=DEFAULT_PADY, sticky=E + W + N + S)
 
         Entry(frame, width=35, insertbackground=self.fg_color, bg=self.bg_color, fg=self.fg_color).pack(
-            side=TOP, anchor=N, fill="x", padx=5, pady=5, ipadx=1, ipady=1
+            side=TOP, anchor=N, fill="x", padx=DEFAULT_PADX, pady=DEFAULT_PADY, ipadx=1, ipady=1
         )
 
         selected_tags = set(self._get_selected_tag_names())
@@ -287,7 +293,7 @@ class GUI:
                     activebackground=self.bg_color,
                     activeforeground=self.fg_color,
                 )
-                button.pack(fill="x", padx=3, pady=3)
+                button.pack(fill="x", padx=DEFAULT_BUTTON_PADX, pady=DEFAULT_BUTTON_PADY)
                 button.bind("<Button-3>", partial(self._update_selected_file_frame, file))
 
         self.files_frame = frame
@@ -302,19 +308,21 @@ class GUI:
         row, column = self.SELECTED_FILE_FRAME_POS
 
         frame = LabelFrame(self.gui, text="Selected File", bg=self.bg_color, fg=self.fg_color)
-        frame.grid(row=row, column=column, padx=5, pady=5, sticky=E + W + N + S)
+        frame.grid(row=row, column=column, padx=DEFAULT_PADX, pady=DEFAULT_PADY, sticky=E + W + N + S)
 
         file = self.selected_file
 
         if not file:
-            Label(frame, text="No file selected", padx=5, pady=5, bg=self.bg_color, fg=self.fg_color).pack(
-                fill="x", padx=5, pady=5
-            )
+            Label(
+                frame, text="No file selected", padx=DEFAULT_PADX, pady=DEFAULT_PADY, bg=self.bg_color, fg=self.fg_color
+            ).pack(fill="x", padx=DEFAULT_PADX, pady=DEFAULT_PADY)
         else:
             for info in file.get_display_info():
-                info_frame = LabelFrame(frame, text=info.title, padx=5, bg=self.bg_color, fg=self.fg_color)
-                info_frame.pack(fill="x", padx=5, pady=5)
-                Label(info_frame, text=info.info, padx=5, bg=self.bg_color, fg=self.fg_color).pack(padx=5, pady=5)
+                info_frame = LabelFrame(frame, text=info.title, padx=DEFAULT_PADX, bg=self.bg_color, fg=self.fg_color)
+                info_frame.pack(fill="x", padx=DEFAULT_PADX, pady=DEFAULT_PADY)
+                Label(info_frame, text=info.info, padx=DEFAULT_PADX, bg=self.bg_color, fg=self.fg_color).pack(
+                    padx=DEFAULT_PADX, pady=DEFAULT_PADY
+                )
 
         self.selected_file_frame = frame
 
