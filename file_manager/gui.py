@@ -136,7 +136,7 @@ class GUI:
             fg=self.fg_color,
         )
         entry.bind("<Return>", lambda _event: self._toggle_tag_visibility(entry))
-        entry.grid(row=0, column=0, padx=DEFAULT_PADX, pady=10, ipadx=1, ipady=1)
+        entry.grid(row=0, column=0, padx=(DEFAULT_PADX, 0), pady=10, ipadx=1, ipady=3)
 
         entry.insert(0, current_tags_search)
         if was_focused_last:
@@ -152,7 +152,7 @@ class GUI:
             fg=self.fg_color,
             activebackground=self.bg_color,
             activeforeground=self.fg_color,
-        ).grid(row=0, column=1, padx=DEFAULT_BUTTON_PADX, pady=DEFAULT_BUTTON_PADY)
+        ).grid(row=0, column=1, padx=(0, DEFAULT_PADX), pady=DEFAULT_BUTTON_PADY)
 
     def _handle_tag_search(self) -> None:
         self._clear_frame(self.tags_frame)
