@@ -115,7 +115,6 @@ class GUI:
 
         self.tags_frame = frame
 
-        self.tags_search = StringVar()
         self._add_tags_search_and_edit_subframe(
             current_tags_search=current_tags_search, was_focused_last=was_focused_last
         )
@@ -126,6 +125,8 @@ class GUI:
         frame = LabelFrame(self.tags_frame, text="Search/Edit", bg=self.bg_color, fg=self.fg_color)
         frame.grid(padx=DEFAULT_PADX, pady=DEFAULT_PADY)
 
+        # pylint: disable = W0201
+        self.tags_search = StringVar()
         entry = Entry(
             frame,
             textvariable=self.tags_search,
