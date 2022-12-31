@@ -28,7 +28,7 @@ WidgetGridPosition = namedtuple("WidgetGridPosition", "row column")
 Colorscheme = Enum("Colorscheme", ["LIGHT", "DARK"])
 
 
-# pylint: disable = R0903
+# pylint: disable = R0902, R0903
 class GUI:
     DEFAULT_COLORSCHEME = Colorscheme.LIGHT
     TAGS_FRAME_POS = WidgetGridPosition(0, 0)
