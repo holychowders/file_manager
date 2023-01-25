@@ -6,26 +6,14 @@ from collections import namedtuple
 from enum import Enum
 from functools import partial
 from logging import warning
-from tkinter import (
-    TOP,
-    Button,
-    Checkbutton,
-    E,
-    Entry,
-    Label,
-    LabelFrame,
-    Menu,
-    N,
-    S,
-    StringVar,
-    Tk,
-    W,
-)
-from typing import List
+from tkinter import TOP, Button, Checkbutton, E, Entry, Label, LabelFrame, Menu, N, S, StringVar, Tk, W
+from typing import List, Optional
 
 import db
 
 WidgetGridPosition = namedtuple("WidgetGridPosition", "row column")
+
+# WidgetGridPosition = namedtuple("WidgetGridPosition", "row column")
 
 Colorscheme = Enum("Colorscheme", ["LIGHT", "DARK"])
 
@@ -280,7 +268,7 @@ class GUI:
     # File results stuff
 
     def _init_files_frame(self) -> None:
-        self._selected_file = None
+        self._selected_file: Optional[db.File] = None
 
         row, column = self.FILES_FRAME_POS
 
@@ -309,7 +297,7 @@ class GUI:
 
         self._files_frame = frame
 
-    def _update_selected_file_frame(self, file: db.File, _args: tkinter.Event) -> None:
+    def _update_selected_file_frame(self, file: db.File, _args: tkinter.Event) -> None:  # type: ignore [type-arg]
         # pylint: disable = W0201
         self._selected_file = file
         self._clear_frame(self._selected_file_frame)

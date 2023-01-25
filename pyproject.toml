@@ -1,0 +1,16 @@
+[tool.pylint]
+max-line-length = 120
+disable = [
+    "C0114", # (missing-module-docstring)
+    "C0115", # (missing-class-docstring)
+    "C0116", # (missing-function-docstring)
+]
+
+[tool.mypy]
+strict = true
+
+[tool.black]
+line_length = 120
+
+[tool.isort]
+line_length = 120
