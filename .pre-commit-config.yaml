@@ -22,11 +22,9 @@ repos:
         entry: isort ./file_manager --profile black
         pass_filenames: false
 
--   repo: local
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: 0b037c2b59aa62dc3be3287d175295f1a5547eb9
     hooks:
-    -   id: pylama
-        name: pylama
-        entry: pylama ./file_manager --async --linters eradicate,mccabe,mypy,pycodestyle,pyflakes,pylint,isort
-        language: python
-        types: [text]
-        pass_filenames: false
+      - id: mypy
+        args: [--strict]
+        additional_dependencies: [tokenize-rt==3.2.0]

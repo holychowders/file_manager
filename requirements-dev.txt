@@ -1,3 +1,2 @@
 pre-commit
-pylama[all]
 black
