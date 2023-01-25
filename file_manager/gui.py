@@ -7,7 +7,6 @@ from enum import Enum
 from functools import partial
 from logging import warning
 from tkinter import TOP, Button, Checkbutton, E, Entry, Label, LabelFrame, Menu, N, S, StringVar, Tk, W
-from typing import List, Optional
 
 import db
 
@@ -228,7 +227,7 @@ class GUI:
         self._clear_frame(self._files_frame)
         self._init_files_frame()
 
-    def _get_visible_tags(self) -> List[db.Tag]:
+    def _get_visible_tags(self) -> list[db.Tag]:
         visible_tags = []
 
         for tag in db.fetch_tags():
@@ -237,7 +236,7 @@ class GUI:
 
         return visible_tags
 
-    def _get_visible_and_matching_tags(self) -> List[db.Tag]:
+    def _get_visible_and_matching_tags(self) -> list[db.Tag]:
         tags = []
         search = set(self._tags_search.get())
 
@@ -256,7 +255,7 @@ class GUI:
 
         return tags
 
-    def _get_selected_tag_names(self) -> List[str]:
+    def _get_selected_tag_names(self) -> list[str]:
         selected_tags = []
 
         for tag in db.fetch_tags():
@@ -268,7 +267,7 @@ class GUI:
     # File results stuff
 
     def _init_files_frame(self) -> None:
-        self._selected_file: Optional[db.File] = None
+        self._selected_file: db.File | None = None
 
         row, column = self.FILES_FRAME_POS
 

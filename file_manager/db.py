@@ -4,7 +4,6 @@ import sqlite3
 from dataclasses import dataclass
 from sqlite3 import Cursor
 from tkinter import IntVar
-from typing import List, Tuple
 
 _DB_PATH = "test.db"
 
@@ -26,9 +25,9 @@ class DisplayInfo:
 class File:
     name: str
     path: str
-    tags: List[str]
+    tags: list[str]
 
-    def get_display_info(self) -> Tuple[DisplayInfo, ...]:
+    def get_display_info(self) -> tuple[DisplayInfo, ...]:
         tags_info = ""
         for tag in self.tags:
             tags_info += f"{tag}, " if tag != self.tags[-1] else tag
@@ -46,7 +45,7 @@ def debug() -> None:
     print("\ntags:\n", _fetch_tags())
 
 
-def fetch_files() -> List[File]:
+def fetch_files() -> list[File]:
     files = _fetch_files()
     file_results = []
 
@@ -59,7 +58,7 @@ def fetch_files() -> List[File]:
 # TAGS
 
 
-def fetch_tags() -> List[Tag]:
+def fetch_tags() -> list[Tag]:
     tags = _fetch_tags()
     content_tags = []
 
@@ -117,11 +116,11 @@ def _create_new() -> None:
     cursor.connection.commit()
 
 
-def _fetch_tags() -> List[Tuple[str, bool, bool]]:
+def _fetch_tags() -> list[tuple[str, bool, bool]]:
     return _get_cursor().execute("SELECT * FROM tags").fetchall()
 
 
-def _fetch_files() -> List[Tuple[str, str, str]]:
+def _fetch_files() -> list[tuple[str, str, str]]:
     return _get_cursor().execute("SELECT * FROM files").fetchall()
 
 
