@@ -15,15 +15,15 @@ repos:
     -   id: black
         entry: black ./file_manager --line-length 120
 
--   repo: local
+-   repo: https://github.com/pycqa/isort
+    rev: 5.11.4
     hooks:
-    -   id: isort
-        name: isort
+      - id: isort
         entry: isort ./file_manager --profile black
-        language: python
-        types: [text]
         pass_filenames: false
 
+-   repo: local
+    hooks:
     -   id: pylama
         name: pylama
         entry: pylama ./file_manager --async --linters eradicate,mccabe,mypy,pycodestyle,pyflakes,pylint,isort
