@@ -21,11 +21,13 @@ from tkinter import (
     Tk,
     W,
 )
-from typing import Any, List, Optional
+from typing import List, Optional
 
 import db
 
 WidgetGridPosition = namedtuple("WidgetGridPosition", "row column")
+
+# WidgetGridPosition = namedtuple("WidgetGridPosition", "row column")
 
 Colorscheme = Enum("Colorscheme", ["LIGHT", "DARK"])
 
