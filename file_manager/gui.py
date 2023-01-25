@@ -6,21 +6,7 @@ from collections import namedtuple
 from enum import Enum
 from functools import partial
 from logging import warning
-from tkinter import (
-    TOP,
-    Button,
-    Checkbutton,
-    E,
-    Entry,
-    Label,
-    LabelFrame,
-    Menu,
-    N,
-    S,
-    StringVar,
-    Tk,
-    W,
-)
+from tkinter import TOP, Button, Checkbutton, E, Entry, Label, LabelFrame, Menu, N, S, StringVar, Tk, W
 from typing import List, Optional
 
 import db
