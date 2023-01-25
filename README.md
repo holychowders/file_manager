@@ -10,8 +10,8 @@ The purpose of this approach is to ensure that all code across the codebase rema
 
 ### Setup
 
-- Ensure that `python` is version 3.10+
-  - `python --version` -> `Python 3.1x.x`
+- Ensure that `python` is version 3.11+
+  - `python --version` >= `Python 3.11.0`
 - Create, activate and verify a virtual environment in the project's directory
   - `python -m virtualenv venv`
   - `source venv/Scripts/activate`
