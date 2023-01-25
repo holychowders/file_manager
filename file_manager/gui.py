@@ -1,4 +1,6 @@
 import os
+import subprocess
+import sys
 import tkinter
 from collections import namedtuple
 from enum import Enum
@@ -32,6 +34,14 @@ DEFAULT_PADY = 5
 
 DEFAULT_BUTTON_PADX = 3
 DEFAULT_BUTTON_PADY = 3
+
+
+def execute_file(filepath: str) -> None:
+    if sys.platform == "win32":
+        os.startfile(filepath)
+    else:
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, filepath])
 
 
 # pylint: disable = R0902, R0903
@@ -288,7 +298,7 @@ class GUI:
                 button = Button(
                     frame,
                     text=file.name,
-                    command=partial(os.startfile, file.path),
+                    command=partial(execute_file, file.path),
                     bg=self._bg_color,
                     fg=self._fg_color,
                     activebackground=self._bg_color,
