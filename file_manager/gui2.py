@@ -8,4 +8,6 @@ def run() -> None:
     gui.rowconfigure(0, weight=1)
     gui.columnconfigure(1, weight=1)
 
+    gui.bind("q", lambda _event: gui.quit())
+
     gui.mainloop()
