@@ -1,5 +1,7 @@
+from functools import partial
 from tkinter import Checkbutton, Entry, Frame, LabelFrame, StringVar, Tk, Widget
 
+import db
 from db import Tag, fetch_unhidden_tags
 
 
@@ -37,7 +39,9 @@ def _display_tag_query_results(query: str, query_results_frame: Widget) -> None:
     # FIXME: Cycling through elements via Tab in the Tags frame should start with the query box before buttons
     # FIXME: If buttons are focused, allow pressing Q to still quit app
     for tag in tag_query_results:
-        Checkbutton(query_results_frame, text=tag.name).grid(sticky="w")
+        Checkbutton(
+            query_results_frame, text=tag.name, variable=tag.is_selected, command=partial(db.toggle_tag_selection, tag)
+        ).grid(sticky="w")
 
     query_results_frame.update_idletasks()
 
