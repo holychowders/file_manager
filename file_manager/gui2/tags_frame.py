@@ -4,13 +4,11 @@ from db import Tag, fetch_unhidden_tags
 
 
 def add_tags_frame(gui: Tk) -> None:
-    # TODO: Replace this and the query frame with a single "Search/Edit Tags" frame
-    tags_frame = LabelFrame(gui, text="Tags")
-    query_frame = LabelFrame(tags_frame, text="Search/Edit")
-    query_results_frame = Frame(query_frame)
+    tags_frame = LabelFrame(gui, text="Search/Edit Tags")
+    query_results_frame = Frame(tags_frame)
 
     query = StringVar()
-    query_box = Entry(query_frame, textvariable=query)
+    query_box = Entry(tags_frame, textvariable=query)
     query_box.bind("<Return>", lambda _event: print("Pressed enter"))
     query_box.bind(
         "<KeyRelease>", lambda event: _handle_query_box_key_released(query.get(), query_results_frame, event.keysym)
@@ -19,7 +17,6 @@ def add_tags_frame(gui: Tk) -> None:
     _handle_query_box_key_released("", query_results_frame, "")
 
     tags_frame.grid()
-    query_frame.grid()
     query_box.grid()
     query_results_frame.grid(sticky="w")
 
