@@ -2,7 +2,6 @@ from functools import partial
 from tkinter import Checkbutton, Entry, Frame, LabelFrame, StringVar, Tk, Widget
 
 import db
-from db import Tag, fetch_unhidden_tags
 
 
 def add_tags_frame(gui: Tk) -> None:
@@ -46,10 +45,10 @@ def _display_tag_query_results(query: str, query_results_frame: Widget) -> None:
     query_results_frame.update_idletasks()
 
 
-def _get_tag_query_results(query: str) -> list[Tag]:
+def _get_tag_query_results(query: str) -> list[db.Tag]:
     # FIXME: Only fetch tags when the db has changed. For example, if we only allow modifying the db for certain
     # behaviors, we might check to see if those behaviors occurred and then cache a fresh fetch
-    available_tags = fetch_unhidden_tags()
+    available_tags = db.fetch_unhidden_tags()
     results = []
 
     case_sensitive = _has_upper(query)
