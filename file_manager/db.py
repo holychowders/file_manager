@@ -71,6 +71,20 @@ def fetch_tags() -> list[Tag]:
     return content_tags
 
 
+def fetch_unhidden_tags() -> list[Tag]:
+    tags = _fetch_tags()
+    content_tags = []
+
+    for tag, is_hidden, is_selected_in_db in tags:
+        is_selected = IntVar()
+        is_selected.set(is_selected_in_db)
+
+        if is_selected:
+            content_tags.append(Tag(name=tag, is_hidden=is_hidden, is_selected=is_selected))
+
+    return content_tags
+
+
 def create_tag(tag: str) -> None:
     _get_cursor().execute(f"INSERT INTO tags(name, is_hidden, is_selected) VALUES ('{tag}', 0, 0)").connection.commit()
 
