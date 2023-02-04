@@ -10,16 +10,12 @@ def run() -> None:
     gui.rowconfigure(0, weight=1)
     gui.columnconfigure(1, weight=1)
 
-    gui.bind("<Escape>", lambda _event: handle_pressed_escape(gui))
+    gui.bind("<Escape>", lambda _event: gui.focus_set())
     gui.bind("q", lambda _event: handle_pressed_q(gui))
 
     add_tags_frame(gui)
 
     gui.mainloop()
-
-
-def handle_pressed_escape(gui: Tk) -> None:
-    gui.focus_set()
 
 
 def handle_pressed_q(gui: Tk) -> None:
