@@ -79,7 +79,22 @@ def fetch_unhidden_tags() -> list[Tag]:
         is_selected = IntVar()
         is_selected.set(is_selected_in_db)
 
+        # FIXME: This is always True and is no longer supposed to be checking for this. Remove it.
         if is_selected:
+            content_tags.append(Tag(name=tag, is_hidden=is_hidden, is_selected=is_selected))
+
+    return content_tags
+
+
+def fetch_selected_tags() -> list[Tag]:
+    tags = _fetch_tags()
+    content_tags = []
+
+    for tag, is_hidden, is_selected_in_db in tags:
+        if is_selected_in_db:
+            is_selected = IntVar()
+            is_selected.set(is_selected_in_db)
+
             content_tags.append(Tag(name=tag, is_hidden=is_hidden, is_selected=is_selected))
 
     return content_tags

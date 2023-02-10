@@ -1,5 +1,6 @@
 from tkinter import Tk
 
+from gui2.files_frame import add_files_frame
 from gui2.tags_frame import add_tags_frame
 
 
@@ -14,6 +15,7 @@ def run() -> None:
     gui.bind("q", lambda _event: handle_pressed_q(gui))
 
     add_tags_frame(gui)
+    add_files_frame(gui)
 
     gui.mainloop()
 
