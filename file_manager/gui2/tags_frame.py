@@ -26,6 +26,8 @@ def _handle_query_box_key_released(query: str, query_results_frame: Widget, key_
     if key_released == "Tab":
         return
 
+    query = query.strip()
+
     _display_tag_query_results(query, query_results_frame)
 
 
