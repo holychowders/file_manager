@@ -7,6 +7,10 @@ disable = [
     "W0511", # (fixme)
 ]
 
+[tool.vulture]
+paths = ["file_manager"]
+sort_by_size = true
+
 [tool.mypy]
 strict = true
 

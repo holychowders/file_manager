@@ -227,15 +227,6 @@ class GUI:
         self._clear_frame(self._files_frame)
         self._init_files_frame()
 
-    def _get_visible_tags(self) -> list[db.Tag]:
-        visible_tags = []
-
-        for tag in db.fetch_tags():
-            if not tag.is_hidden:
-                visible_tags.append(tag)
-
-        return visible_tags
-
     def _get_visible_and_matching_tags(self) -> list[db.Tag]:
         tags = []
         search = set(self._tags_search.get())
