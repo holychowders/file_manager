@@ -1,3 +1,7 @@
+import os
+import subprocess
+import sys
+from functools import partial
 from tkinter import Button, Entry, Frame, LabelFrame, StringVar, Tk, Widget
 
 import db
@@ -58,12 +62,13 @@ def _display_results(query: StringVar, results_frame: Widget, key_released: str)
     # FIXME: Cycling through elements via Tab in the Files frame should start with the query box before buttons
     # FIXME: If buttons are focused, allow pressing Q to still quit app
     # TODO: Implement file searching
-    # TODO: Implement opening files
     for file in file_query_results:
         display_name = (
             file.name[: max_file_name_length - 3] + "..." if len(file.name) > max_file_name_length else file.name
         )
-        Button(results_frame, text=display_name, anchor="w").grid(sticky="ew")
+        # TODO: A button should not be created for files without a valid path. However, in case one is, the user should
+        # be notified that the file they just tried to open couldn't be found, and a resolution must be offered.
+        Button(results_frame, text=display_name, anchor="w", command=partial(open_file, file.path)).grid(sticky="ew")
 
     results_frame.update_idletasks()
 
@@ -82,3 +87,11 @@ def _get_file_query_results(_query: str) -> list[db.File]:
             results.append(file)
 
     return results
+
+
+def open_file(filepath: str) -> None:
+    if sys.platform == "win32":
+        os.startfile(filepath)
+    else:
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, filepath])
