@@ -79,11 +79,11 @@ def _get_file_query_results(_query: str) -> list[db.File]:
 
     for file in db.fetch_files():
         # Partial matches
-        has_selected_tags = set(selected_tags).issubset(file.tags)
+        is_match = set(selected_tags).issubset(file.tags)
         # Exact matches
         # has_selected_tags = set(file.tags).issubset(selected_tags)
 
-        if has_selected_tags:
+        if is_match:
             results.append(file)
 
     return results
