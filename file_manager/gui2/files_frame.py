@@ -61,7 +61,6 @@ def _display_results(query: StringVar, results_frame: Widget, key_released: str)
 
     # FIXME: Cycling through elements via Tab in the Files frame should start with the query box before buttons
     # FIXME: If buttons are focused, allow pressing Q to still quit app
-    # TODO: Implement file searching
     for file in file_query_results:
         display_name = (
             file.name[: max_file_name_length - 3] + "..." if len(file.name) > max_file_name_length else file.name
@@ -73,15 +72,21 @@ def _display_results(query: StringVar, results_frame: Widget, key_released: str)
     results_frame.update_idletasks()
 
 
-def _get_file_query_results(_query: str) -> list[db.File]:
+def _get_file_query_results(query: str) -> list[db.File]:
     results = []
     selected_tags = tuple(tag.name for tag in db.fetch_selected_tags())
 
     for file in db.fetch_files():
-        # Partial matches
-        is_match = set(selected_tags).issubset(file.tags)
-        # Exact matches
-        # has_selected_tags = set(file.tags).issubset(selected_tags)
+        # Partial match
+        tags_match = set(selected_tags).issubset(file.tags)
+        # Exact match
+        # tags_match = set(file.tags).issubset(selected_tags)
+
+        case_sensitive = _has_upper(query)
+        name_to_match = file.name if case_sensitive else file.name.casefold()
+        query_matches = set(query).issubset(name_to_match)
+
+        is_match = tags_match and query_matches
 
         if is_match:
             results.append(file)
@@ -95,3 +100,11 @@ def open_file(filepath: str) -> None:
     else:
         opener = "open" if sys.platform == "darwin" else "xdg-open"
         subprocess.call([opener, filepath])
+
+
+def _has_upper(string: str) -> bool:
+    for char in string:
+        if char.isupper():
+            return True
+
+    return False
