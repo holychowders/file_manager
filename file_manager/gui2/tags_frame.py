@@ -41,7 +41,10 @@ def _display_tag_query_results(query: str, query_results_frame: Widget) -> None:
     # FIXME: If buttons are focused, allow pressing Q to still quit app
     for tag in tag_query_results:
         Checkbutton(
-            query_results_frame, text=tag.name, variable=tag.is_selected, command=partial(_handle_tag_selection, tag)
+            query_results_frame,
+            text=tag.name,
+            variable=tag.is_selected,
+            command=partial(_handle_tag_selection, tag),
         ).grid(sticky="w")
 
     query_results_frame.update_idletasks()
@@ -70,8 +73,4 @@ def _handle_tag_selection(tag: db.Tag) -> None:
 
 
 def _has_upper(string: str) -> bool:
-    for char in string:
-        if char.isupper():
-            return True
-
-    return False
+    return any(char.isupper() for char in string)

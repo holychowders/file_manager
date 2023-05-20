@@ -9,12 +9,14 @@ import db
 
 # pylint: disable = R0903
 class FilesFrameInterface:
-    """Warning: The files frame must have been added prior in order for this interface to have been properly
+    """
+    Warning: The files frame must have been added prior in order for this interface to have been properly
     initialized. Use only after the files frame has been added.
 
     The purpose of this interface is to allow other frames to request an update when something relevant has changed.
     For example, if a tag has been selected, the files frame should be updated so that the query can be made with
-    tag selections taken into account."""
+    tag selections taken into account.
+    """  # noqa: D205
 
     # TODO: These attributes should have a single underscore to indicate protected
     query: StringVar
@@ -80,7 +82,6 @@ def _get_file_query_results(query: str) -> list[db.File]:
         # Partial match
         tags_match = set(selected_tags).issubset(file.tags)
         # Exact match
-        # tags_match = set(file.tags).issubset(selected_tags)
 
         case_sensitive = _has_upper(query)
         name_to_match = file.name if case_sensitive else file.name.casefold()
@@ -96,15 +97,11 @@ def _get_file_query_results(query: str) -> list[db.File]:
 
 def open_file(filepath: str) -> None:
     if sys.platform == "win32":
-        os.startfile(filepath)
+        os.startfile(filepath)  # noqa: S606
     else:
         opener = "open" if sys.platform == "darwin" else "xdg-open"
-        subprocess.call([opener, filepath])
+        subprocess.call([opener, filepath])  # noqa: S603
 
 
 def _has_upper(string: str) -> bool:
-    for char in string:
-        if char.isupper():
-            return True
-
-    return False
+    return any(char.isupper() for char in string)
