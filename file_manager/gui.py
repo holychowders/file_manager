@@ -53,7 +53,7 @@ class GUI:
     def _init_root(self) -> None:
         gui = Tk()
         gui.title("File Manager")
-        gui.iconbitmap("assets/main-icon-512px-colored.ico")
+        # gui.iconbitmap("assets/main-icon-512px-colored.ico")
         gui.configure(bg=self._bg_color)
         gui.rowconfigure(0, weight=1)
         gui.columnconfigure(1, weight=1)
