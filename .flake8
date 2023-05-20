@@ -1,8 +1,0 @@
-[flake8]
-extend-ignore =
-    # pycodestyle: line too long (82 characters)
-    E501
-max-complexity = 10
-exclude =
-    .git,
-    __pycache__,
