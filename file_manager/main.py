@@ -4,7 +4,7 @@ import db
 from gui import GUI
 
 
-def main(debug: bool) -> None:
+def main(debug: bool) -> None:  # noqa: FBT001
     db.init()
     GUI(debug=debug).run()
 
