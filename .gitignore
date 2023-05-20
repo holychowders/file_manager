@@ -1,4 +1,5 @@
 venv
+.python-version
 .idea
 
 sample_video.mp4

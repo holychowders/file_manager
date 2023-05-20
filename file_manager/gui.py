@@ -6,13 +6,26 @@ from collections import namedtuple
 from enum import Enum
 from functools import partial
 from logging import warning
-from tkinter import TOP, Button, Checkbutton, E, Entry, Label, LabelFrame, Menu, N, S, StringVar, Tk, W
+from tkinter import (
+    TOP,
+    Button,
+    Checkbutton,
+    E,
+    Entry,
+    Label,
+    LabelFrame,
+    Menu,
+    N,
+    S,
+    StringVar,
+    Tk,
+    W,
+)
 
 import db
 
 WidgetGridPosition = namedtuple("WidgetGridPosition", "row column")
 
-# WidgetGridPosition = namedtuple("WidgetGridPosition", "row column")
 
 Colorscheme = Enum("Colorscheme", ["LIGHT", "DARK"])
 
@@ -25,20 +38,23 @@ DEFAULT_BUTTON_PADY = 3
 
 def execute_file(filepath: str) -> None:
     if sys.platform == "win32":
-        os.startfile(filepath)
+        os.startfile(filepath)  # noqa: S606
     else:
         opener = "open" if sys.platform == "darwin" else "xdg-open"
-        subprocess.call([opener, filepath])
+        subprocess.call([opener, filepath])  # noqa: S603
 
 
-# pylint: disable = R0902, R0903
 class GUI:
     DEFAULT_COLORSCHEME = Colorscheme.LIGHT
     TAGS_FRAME_POS = WidgetGridPosition(0, 0)
     FILES_FRAME_POS = WidgetGridPosition(0, 1)
     SELECTED_FILE_FRAME_POS = WidgetGridPosition(0, 2)
 
-    def __init__(self, colorscheme: Colorscheme = DEFAULT_COLORSCHEME, debug: bool = False) -> None:
+    def __init__(
+        self,
+        colorscheme: Colorscheme = DEFAULT_COLORSCHEME,
+        debug: bool = False,  # noqa: FBT001, FBT002
+    ) -> None:
         self._init_colorscheme(colorscheme)
         self._init_root()
         self._add_menu_bar()
@@ -53,7 +69,6 @@ class GUI:
     def _init_root(self) -> None:
         gui = Tk()
         gui.title("File Manager")
-        gui.iconbitmap("assets/main-icon-512px-colored.ico")
         gui.configure(bg=self._bg_color)
         gui.rowconfigure(0, weight=1)
         gui.columnconfigure(1, weight=1)
@@ -91,12 +106,11 @@ class GUI:
     def _switch_colorscheme(self, colorscheme: Colorscheme) -> None:
         self._reinit(colorscheme=colorscheme, debug=self._debug)
 
-    def _reinit(self, colorscheme: Colorscheme, debug: bool) -> None:
+    def _reinit(self, colorscheme: Colorscheme, debug: bool) -> None:  # noqa: FBT001
         self.gui.destroy()
-        # pylint: disable = C2801
         self.__init__(colorscheme=colorscheme, debug=debug)  # type: ignore[misc]
 
-    def _handle_debug_init(self, debug: bool) -> None:
+    def _handle_debug_init(self, debug: bool) -> None:  # noqa: FBT001
         self._debug = debug
 
         if self._debug:
@@ -104,7 +118,11 @@ class GUI:
 
     # Tags stuff
 
-    def _init_tags_frame(self, current_tags_search: str = "", was_focused_last: bool = False) -> None:
+    def _init_tags_frame(
+        self,
+        current_tags_search: str = "",
+        was_focused_last: bool = False,  # noqa: FBT001, FBT002
+    ) -> None:
         row, column = self.TAGS_FRAME_POS
 
         frame = LabelFrame(self.gui, text="Tags", bg=self._bg_color, fg=self._fg_color)
@@ -113,16 +131,20 @@ class GUI:
         self._tags_frame = frame
 
         self._add_tags_search_and_edit_subframe(
-            current_tags_search=current_tags_search, was_focused_last=was_focused_last
+            current_tags_search=current_tags_search,
+            was_focused_last=was_focused_last,
         )
         self._add_tags_selection_clear_button()
         self._populate_tags_in_tags_frame()
 
-    def _add_tags_search_and_edit_subframe(self, current_tags_search: str, was_focused_last: bool) -> None:
+    def _add_tags_search_and_edit_subframe(
+        self,
+        current_tags_search: str,
+        was_focused_last: bool,  # noqa: FBT001
+    ) -> None:
         frame = LabelFrame(self._tags_frame, text="Search/Edit", bg=self._bg_color, fg=self._fg_color)
         frame.grid(padx=DEFAULT_PADX, pady=DEFAULT_PADY)
 
-        # pylint: disable = W0201
         self._tags_search = StringVar()
         entry = Entry(
             frame,
@@ -266,7 +288,13 @@ class GUI:
         frame.grid(row=row, column=column, padx=DEFAULT_PADX, pady=DEFAULT_PADY, sticky=E + W + N + S)
 
         Entry(frame, width=35, insertbackground=self._fg_color, bg=self._bg_color, fg=self._fg_color).pack(
-            side=TOP, anchor=N, fill="x", padx=DEFAULT_PADX, pady=DEFAULT_PADY, ipadx=1, ipady=1
+            side=TOP,
+            anchor=N,
+            fill="x",
+            padx=DEFAULT_PADX,
+            pady=DEFAULT_PADY,
+            ipadx=1,
+            ipady=1,
         )
 
         selected_tags = set(self._get_selected_tag_names())
@@ -288,7 +316,6 @@ class GUI:
         self._files_frame = frame
 
     def _update_selected_file_frame(self, file: db.File, _args: tkinter.Event) -> None:  # type: ignore [type-arg]
-        # pylint: disable = W0201
         self._selected_file = file
         self._clear_frame(self._selected_file_frame)
         self._init_selected_file_frame()
@@ -315,7 +342,8 @@ class GUI:
                 info_frame = LabelFrame(frame, text=info.title, padx=DEFAULT_PADX, bg=self._bg_color, fg=self._fg_color)
                 info_frame.pack(fill="x", padx=DEFAULT_PADX, pady=DEFAULT_PADY)
                 Label(info_frame, text=info.info, padx=DEFAULT_PADX, bg=self._bg_color, fg=self._fg_color).pack(
-                    padx=DEFAULT_PADX, pady=DEFAULT_PADY
+                    padx=DEFAULT_PADX,
+                    pady=DEFAULT_PADY,
                 )
 
         self._selected_file_frame = frame
