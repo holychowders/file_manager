@@ -1,30 +1,35 @@
-# Readme
+# File Manager
 
-## Development
+**Semi-abandoned project to create a minimalistic file manager with tags and better-than-average organization capabilities**
 
-This project uses a variety of code quality tools to automatically check and enforce certain standards.
+---
 
-The purpose of this approach is to ensure that all code across the codebase remains consistent and maintains some baseline of quality and safety. This also ensures that the developer can be more confident in the changes they make and focus more on the important details.
+Stack: python, tkinter, sqlite
+</br>
+Tools: [pre-commit](.pre-commit-config.yaml), [GitHub Actions](.github/workflows/pre-commit.yaml)
+</br>
+Support: Windows, Linux, untested on Mac (probably works)
 
-`pre-commit` is the tool that will manage all of the other code quality tools. It's the only tool that will be needed to be run by the developer. Its typical use is noted below.
+## Details
 
-### Setup
+### UI and Behavior on `main`
 
-- Ensure that `python` is version 3.11+
-  - `python --version` >= `Python 3.11.0`
-- Create, activate and verify a virtual environment in the project's directory
-  - `python -m virtualenv venv`
-  - `source venv/Scripts/activate`
-  - `which python` -> `project_dir/venv/Scripts/python`
-- Install the development requirements
-  - `python -m pip install -r requirements-dev.txt`
-  - `pre-commit install`
-  - `pre-commit`
+![Image of GUI on `main` branch](screenshots/main_gui.png)
 
-### Developing
+The UI on the `main` branch currently allows adding, deleting, and live-searching tags in the underlying database. Upon typing in the `Search/Edit` field of the `Tags` section, the tags list below it will update with current matches. If there are matching tags, the user can select any of them. If the user's search is an exact match, pressing the `+/-` button hides the tag from the user interface. If there is no exact match, pressing the `+/-` button creates a new tag. There's currently no way to actually delete a tag from the database from the UI. `Clear Selections` clears the search box and deselects all tags.
 
-Periodically check changes for issues. Do this more frequently for larger or more complicated changes.
+When tags are selected, the `Files` section updates to list files that contain matches for all of the tags selected. Files that do not include every selected tag are filtered out.
 
-- Run `pre-commit` to check staged changes.
-- Run `pre-commit run --all-files` to check both staged and unstaged changes.
-- `git commit` will automatically cause `pre-commit` to run and will fail if all checks do not pass. Correct the issues (if not corrected automatically), re-stage, and re-attempt commit.
+Clicking a listed file result from the `Files` section (paths hardcoded) opens it using the system's default opener. Middle clicking on a file result "selects" it and updates the `Selected File` section to include information about that file.
+
+The UI resizes fairly gracefully. There's also a (not totally dark) dark mode.
+
+The UI is obviously very clunky and not very minimal -- lots of unecessary lines and boxes are present. You'll also notice that it has lots of flickering on interaction, as interaction causes the entire UI to be re-constructed. Because it was written in a tightly-coupled way that was very difficult to change, a rewrite of this GUI was initiated on the `rewrite_gui` branch as opposed to simply updating the original.
+
+### UI and Behavior on `rewrite_gui`
+
+![Image of GUI on `rewrite_gui` branch](screenshots/rewrite_gui.png)
+
+This rewrite of the UI was started because of the obnoxious flickering on interaction on the original (as stated in [above](#ui-and-behavior-on-main)). The in-progress rework can be used by passing `gui2` as an argument to the normal run command: `python file_manager/main.py gui2`.
+
+This UI can search and select tags and search files. That's about it.
