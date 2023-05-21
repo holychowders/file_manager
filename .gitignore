@@ -1,6 +1,7 @@
 venv
 .python-version
 .idea
+.vscode
 
 sample_video.mp4
 test.db
