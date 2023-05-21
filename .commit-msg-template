@@ -1,0 +1,16 @@
+
+# This project uses a minimal "Conventional Commits" structure
+# (see https://www.conventionalcommits.org/en/v1.0.0/#summary)
+# -------------------------------------
+# <type>[optional scope]: <description>
+#
+# [optional body]
+#
+# [optional footer(s)]
+# -------------------------------------
+#
+# types: fix, feat, build, chore, ci, docs, style, refactor, perf, test
+# scope examples: parser, db, ui
+# Example header: fix(ui): use consistent border thickness for input fields
+#
+# To disable this message, run `git config --unset commit.template`
